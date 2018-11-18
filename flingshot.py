@@ -3,6 +3,7 @@ import printer as p
 import random as rand
 
 def blocks(entrance, exit, height, difficulty, complexity, key, seed):
+    # TODO move the majority of this function somewhere else; the algorithm should be its own method
     if height < 4:
         height = 4
     width = 9
@@ -42,12 +43,18 @@ def blocks(entrance, exit, height, difficulty, complexity, key, seed):
     G.define_end_location((exit, exit_height))
 
     G.build_path((entrance, starting_height), "R", 3)
+    p.printGG(G)
     #End algorithm
     #---------------------------------------------------
 
     for i in range(height):
         for j in range(width):
-            grid[i][j] = "O" if G.is_path[j][i] else "X"
+            if G.is_path[j][i]:
+                grid[i][j] = "O"
+            elif G.is_used_wall[j][i]:
+                grid[i][j] = "U"
+            else:
+                grid[i][j] = "X"
 
     grid.insert(0,top)
     grid.append(bottom)
@@ -55,7 +62,6 @@ def blocks(entrance, exit, height, difficulty, complexity, key, seed):
     for i in range(len(grid)):
         grid[i].insert(0,"X")
         grid[i].append("X")
-
     return grid
 #--------------------------------------
 def floor(n):
@@ -69,7 +75,6 @@ p.printB(b)
 # THINGS TO IMPLEMENT
 #  Used Walls
 #  - Removal/addition of unimportant walls algorithm
-#  - Add Used Walls to pretty printer
 #  Genrate more complex patterns from existing algorithms
 #  - Path chaining method - arbitrary pattern
 #  Test cases

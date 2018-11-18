@@ -35,11 +35,12 @@ class GridGraph:
                 self.rev[i].append(j)
                 self.is_path[i].append(j)
                 self.is_vertex[i].append(j)
+                self.is_used_wall[i].append(j)
                 self.adj[i][j] = []
                 self.rev[i][j] = []
                 self.is_path[i][j] = False
                 self.is_vertex[i][j] = False
-                self.is_vertex[i][j] = False
+                self.is_used_wall[i][j] = False
 
     def define_start_location(self, p):
         if not self.start_location_defined:
@@ -48,8 +49,8 @@ class GridGraph:
             self.add_edge(p, p)
             for i in range(p[1], self.height):
                 self.is_path[p[0]][i] = True
-            # if not p[1] == 0:
-            #     self.is_used_wall[p[0]][p[1]-1] = True
+            if not p[1] == 0:
+                self.is_used_wall[p[0]][p[1]-1] = True
 
     def define_end_location(self, p):
         if not self.end_location_defined:

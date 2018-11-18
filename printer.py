@@ -7,6 +7,10 @@ def printB(blocks):
 def printGG(gg):
     for j in range(len(gg.is_path[0])):
         for i in range(len(gg.is_path)):
-            print "O" if gg.is_path[i][j] else "X",
-            # Add U for used wall
+            if gg.is_path[i][j]:
+                print "O",
+            elif gg.is_used_wall[i][j]:
+                print "U",
+            else:
+                print "X",
         print ""
