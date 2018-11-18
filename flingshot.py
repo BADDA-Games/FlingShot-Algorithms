@@ -2,7 +2,7 @@ import gridgraph as gg
 import printer as p
 import random as rand
 
-def blocks(entrance, exit, height, difficulty, complexity, key, seed):
+def create_blocks(entrance, exit, height, difficulty, complexity, key, seed):
     # TODO move the majority of this function somewhere else; the algorithm should be its own method
     if height < 4:
         height = 4
@@ -27,25 +27,7 @@ def blocks(entrance, exit, height, difficulty, complexity, key, seed):
     top[exit] = "O"
     bottom[entrance] = "O"
 
-    #Reminder that our coordinate system is (x,y), starting from top left
-    #---------------------------------------------------
-
-    G = gg.GridGraph(width, height)
-    R = rand.RandomSeed(seed)
-    #Algorithm goes here
-    start_var = R.generate(0,2)
-    exit_var = R.generate(0,3)
-
-    starting_height = height - height//4 - start_var
-    G.define_start_location((entrance, starting_height))
-
-    exit_height = height//8 + exit_var + 1
-    G.define_end_location((exit, exit_height))
-
-    G.build_path((entrance, starting_height), "R", 3)
-    p.printGG(G)
-    #End algorithm
-    #---------------------------------------------------
+    G = blocks(entrance, exit, height, width, difficulty, complexity, key, seed)
 
     for i in range(height):
         for j in range(width):
@@ -63,13 +45,29 @@ def blocks(entrance, exit, height, difficulty, complexity, key, seed):
         grid[i].insert(0,"X")
         grid[i].append("X")
     return grid
+
+#Reminder that our coordinate system is (x,y), starting from top left
+def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
+    G = gg.GridGraph(width, height)
+    R = rand.RandomSeed(seed)
+
+    start_var = R.generate(0,2)
+    starting_height = height - height//4 - start_var
+    exit_var = R.generate(0,3)
+    exit_height = height//8 + exit_var + 1
+
+    G.define_start_location((entrance, starting_height))
+    G.define_end_location((exit, exit_height))
+
+    G.build_path((entrance, starting_height), "R", 3)
+    return G
 #--------------------------------------
 def floor(n):
     return int(n//1)
 #--------------------------------------
-public_seed = 12
-b = blocks(2, 5, 10, 4, 3, False, public_seed)
-p.printB(b)
+public_seed = 80085
+b = create_blocks(2, 5, 10, 4, 3, False, public_seed)
+p.print_b(b)
 
 #--------------------------------------
 # THINGS TO IMPLEMENT

@@ -115,7 +115,6 @@ class GridGraph:
                     self.build(f, (f[0], self.height-1))
                 else:
                     self.build(f, (f[0], f[1]+length))
-            print f
 
     def traverse():
         if not self.start_location == None:
