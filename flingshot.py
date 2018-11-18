@@ -59,13 +59,16 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
     G.define_start_location((entrance, starting_height))
     G.define_end_location((exit, exit_height))
 
-    G.build_path((entrance, starting_height), "R", 3)
+    G.build_path((entrance, starting_height), "R", 2)
+    G.build_path((4,2), "D", 5)
+
+    G.traverse()
     return G
 #--------------------------------------
 def floor(n):
     return int(n//1)
 #--------------------------------------
-public_seed = 80085
+public_seed = 8000
 b = create_blocks(2, 5, 10, 4, 3, False, public_seed)
 p.print_b(b)
 

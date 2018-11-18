@@ -90,9 +90,17 @@ class GridGraph:
         return self.out_deg(xy[0],xy[1])
 
     # TODO modify to check for removed vertices and paths
+    # Iterate through each non-stop part of the path, if it interferes
+    # with another path, determine if adj or rev need to be modified or cleared
+    # also need to check sides to see if paths are joining by being
+    # next to each other but just at the tip
     def build(self, f, t):
         self.add_edge(f,t)
 
+    # Special note about build_path - The length of it does not include the
+    # starting point f; the length is the number out from f it goes.
+    # f will also be converted to a path if it is not - the idea is
+    # that you build paths from other paths
     def build_path(self, f, direction, length):
         if length > 0 and 0 <= f[0] < self.width and 0 <= f[1] < self.height:
             if direction == "R":
@@ -116,7 +124,103 @@ class GridGraph:
                 else:
                     self.build(f, (f[0], f[1]+length))
 
-    def traverse():
+    def traverse(self):
         if not self.start_location == None:
-            #BFS
-            print "Hello"
+            self.reset_lists()
+            self.bfs(self.start_location)
+
+    def reset_lists(self):
+        self.adj = []
+        self.rev = []
+        for i in range(self.width):
+            self.adj.append(i)
+            self.rev.append(i)
+            self.adj[i] = []
+            self.rev[i] = []
+            for j in range(self.height):
+                self.adj[i].append(j)
+                self.rev[i].append(j)
+                self.adj[i][j] = []
+                self.rev[i][j] = []
+
+    def bfs(self, start):
+        print self.start_location[0]
+        print self.height - 1
+        self.bfs_recursive([start], [])
+
+    def bfs_recursive(self, queue, visited):
+        print queue
+        print visited
+        if len(queue) > 0:
+            curr = queue[0]
+            l = self.move(curr, "L")
+            r = self.move(curr, "R")
+            u = self.move(curr, "U")
+            d = self.move(curr, "D")
+            if not l == None:
+                self.add_to_lists(curr, l)
+                if not l in visited:
+                    add_if_missing(l, queue)
+            if not r == None:
+                self.add_to_lists(curr, r)
+                if not r in visited:
+                    add_if_missing(r, queue)
+            if not u == None:
+                self.add_to_lists(curr, u)
+                if not u in visited:
+                    add_if_missing(u, queue)
+            if not d == None:
+                self.add_to_lists(curr, d)
+                if not d in visited:
+                    add_if_missing(d, queue)
+            visited.append(curr)
+            self.bfs_recursive(queue[1:], visited)
+
+    def add_to_lists(self, f, t):
+        adj = self.adj[f[0]][f[1]]
+        new_adj = add_if_missing(t, adj)
+        self.adj[f[0]][f[1]] = new_adj
+        rev = self.rev[t[0]][t[1]]
+        new_rev = add_if_missing(f, rev)
+        self.rev[t[0]][t[1]] = new_rev
+
+    def move(self, f, direction):
+        if 0 <= f[0] < self.width and 0 <= f[1] < self.height:
+            if not self.is_path[f[0]][f[1]]:
+                return None
+            elif direction == "R":
+                x = f[0]
+                y = f[1]
+                while x + 1 < self.width and self.is_path[x + 1][y]:
+                    x = x + 1
+                return (x,y)
+            elif direction == "L":
+                x = f[0]
+                y = f[1]
+                while x - 1 >= 0 and self.is_path[x - 1][y]:
+                    x = x - 1
+                return (x,y)
+            elif direction == "U":
+                x = f[0]
+                y = f[1]
+                while y - 1 >= 0 and self.is_path[x][y - 1]:
+                    y = y - 1
+                if x == self.end_location and y == 0:
+                    return f # Going up here will advance to next grid
+                return (x,y)
+            elif direction == "D":
+                x = f[0]
+                y = f[1]
+                while y + 1 < self.height and self.is_path[x][y + 1]:
+                    y = y + 1
+                if x == self.start_location[0] and y == self.height - 1:
+                    return f # Going down here will go to the previous grid
+                return (x,y)
+            return None #bad direction
+        else:
+            return None
+
+def add_if_missing(element, list):
+    if not element in list:
+        list.append(element)
+    return list
