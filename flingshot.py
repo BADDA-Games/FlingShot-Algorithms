@@ -65,10 +65,12 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
 
     G.build_path((6,1), "D", 8)
 
-    # print G.vertices
     p.print_3d_list(G.adj)
+    print "----------------------------"
     p.print_3d_list(G.rev)
-    # print G.rev
+
+
+    G.determine_extra_paths(R)
     return G
 #--------------------------------------
 def floor(n):
@@ -85,7 +87,6 @@ p.print_b(b)
 #  Genrate more complex patterns from existing algorithms
 #  - Path chaining method - arbitrary pattern
 #  Test cases
-#  Proper tracking of adj and rev
 #  Efficient way to report back good spots to build more paths
 #  - Where to add new paths without interfering with any other paths in the graph
 #

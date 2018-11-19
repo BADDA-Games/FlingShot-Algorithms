@@ -92,15 +92,12 @@ class GridGraph:
         y = p[1]
         return 0 <= x < self.width and 0 <= y < self.height
 
-    # TODO modify to check for removed vertices and paths
-    # Iterate through each non-stop part of the path, if it interferes
-    # with another path, determine if adj or rev need to be modified or cleared
-    # also need to check sides to see if paths are joining by being
-    # next to each other but just at the tip
+    # TODO use update_path sides to update the grid without
+    # doing a whole traversal
     def build(self, f, t):
         self.add_edge(f,t)
         self.traverse() #inefficient, but works
-        # self.update_path_sides(f, t) TODO get this working in the future
+        # self.update_path_sides(f, t)
 
     #TODO
     def update_path_sides(self, f, t):
@@ -117,13 +114,11 @@ class GridGraph:
                 print (i, f[1]),
             print ""
 
-
     def path_orientation(self, f, t):
         if f[0] == t[0]: # Same x values
             return "P" if f[1] == t[1] else "V"
         else: # Same y values
             return "H" if f[1] == t[1] else "N"
-
 
     def update_vertex_neighbors(self, p):
         self.mark_used_walls_p(p)
@@ -269,7 +264,8 @@ class GridGraph:
         if self.is_in_grid(d) and not self.is_path[d[0]][d[1]]:
             self.is_used_wall[d[0]][d[1]] = True
 
-
+    def determine_extra_paths(self, rand):
+        print "Hello"
 
 def add_if_missing(element, list):
     if not element in list:
