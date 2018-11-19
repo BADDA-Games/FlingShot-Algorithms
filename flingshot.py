@@ -63,8 +63,12 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
     G.build_path((4,2), "D", 10)
     G.build_path((4,9), "L", 10)
 
-    G.traverse()
-    print G.vertices
+    G.build_path((6,1), "D", 8)
+
+    # print G.vertices
+    p.print_3d_list(G.adj)
+    p.print_3d_list(G.rev)
+    # print G.rev
     return G
 #--------------------------------------
 def floor(n):

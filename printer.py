@@ -14,3 +14,13 @@ def print_gg(gg):
             else:
                 print "X",
         print ""
+
+def print_3d_list(list):
+    width = len(list)
+    height = len(list[0])
+    for i in range(width):
+        for j in range(height):
+            if len(list[i][j]) > 0:
+                print (i,j),
+                print ": ",
+                print list[i][j]

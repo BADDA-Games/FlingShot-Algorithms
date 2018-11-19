@@ -62,11 +62,8 @@ class GridGraph:
                 self.is_path[p[0]][i] = True
 
     def add_edge(self, f, t):
-        if f[0] == t[0] or f[1] == t[1]:
-            # Currently choosing not to add edges to adjacency list immediately
-            # self.adj[f[0]][f[1]].append(t)
-            # self.rev[t[0]][t[1]].append(f)
-            if f[0] == t[0]:
+        if not self.path_orientation(f, t) == "N":
+            if self.path_orientation(f, t) == "V" or self.path_orientation(f, t) == "P":
                 current = min(f[1], t[1])
                 while current-1 < f[1] or current-1 < t[1]:
                     self.is_path[f[0]][current] = True
@@ -96,13 +93,40 @@ class GridGraph:
         return 0 <= x < self.width and 0 <= y < self.height
 
     # TODO modify to check for removed vertices and paths
-    # Add or remove used walls
     # Iterate through each non-stop part of the path, if it interferes
     # with another path, determine if adj or rev need to be modified or cleared
     # also need to check sides to see if paths are joining by being
     # next to each other but just at the tip
     def build(self, f, t):
         self.add_edge(f,t)
+        self.traverse() #inefficient, but works
+        # self.update_path_sides(f, t) TODO get this working in the future
+
+    #TODO
+    def update_path_sides(self, f, t):
+        self.update_vertex_neighbors(f)
+        self.update_vertex_neighbors(t)
+        if self.path_orientation(f, t) == "V":
+            min, max = minmax(f[1], t[1])
+            for i in range(min, max+1):
+                print (f[0], i),
+            print ""
+        elif self.path_orientation(f, t) == "H":
+            min, max = minmax(f[0], t[0])
+            for i in range(min, max+1):
+                print (i, f[1]),
+            print ""
+
+
+    def path_orientation(self, f, t):
+        if f[0] == t[0]: # Same x values
+            return "P" if f[1] == t[1] else "V"
+        else: # Same y values
+            return "H" if f[1] == t[1] else "N"
+
+
+    def update_vertex_neighbors(self, p):
+        self.mark_used_walls_p(p)
 
     # Special note about build_path - The length of it does not include the
     # starting point f; the length is the number out from f it goes.
@@ -212,7 +236,7 @@ class GridGraph:
                 while y - 1 >= 0 and self.is_path[x][y - 1]:
                     y = y - 1
                 if x == self.end_location[0] and y == 0:
-                    return f # Going up here will advance to next grid
+                    return None # Going up here will advance to next grid
                 return (x,y)
             elif direction == "D":
                 x = f[0]
@@ -220,7 +244,7 @@ class GridGraph:
                 while y + 1 < self.height and self.is_path[x][y + 1]:
                     y = y + 1
                 if x == self.start_location[0] and y == self.height - 1:
-                    return f # Going down here will go to the previous grid
+                    return None # Going down here will go to the previous grid
                 return (x,y)
             return None #bad direction
         else:
@@ -228,22 +252,31 @@ class GridGraph:
 
     def mark_used_walls(self):
         for p in self.vertices:
-            l = (p[0]-1, p[1])
-            r = (p[0]+1, p[1])
-            u = (p[0], p[1]-1)
-            d = (p[0], p[1]+1)
-            # To be modified with other elements potentially later
-            if self.is_in_grid(l) and not self.is_path[l[0]][l[1]]:
-                self.is_used_wall[l[0]][l[1]] = True
-            if self.is_in_grid(r) and not self.is_path[r[0]][r[1]]:
-                self.is_used_wall[r[0]][r[1]] = True
-            if self.is_in_grid(u) and not self.is_path[u[0]][u[1]]:
-                self.is_used_wall[u[0]][u[1]] = True
-            if self.is_in_grid(d) and not self.is_path[d[0]][d[1]]:
-                self.is_used_wall[d[0]][d[1]] = True
+            self.mark_used_walls_p(p)
+
+    def mark_used_walls_p(self, p):
+        l = (p[0]-1, p[1])
+        r = (p[0]+1, p[1])
+        u = (p[0], p[1]-1)
+        d = (p[0], p[1]+1)
+        # To be modified with other elements potentially later
+        if self.is_in_grid(l) and not self.is_path[l[0]][l[1]]:
+            self.is_used_wall[l[0]][l[1]] = True
+        if self.is_in_grid(r) and not self.is_path[r[0]][r[1]]:
+            self.is_used_wall[r[0]][r[1]] = True
+        if self.is_in_grid(u) and not self.is_path[u[0]][u[1]]:
+            self.is_used_wall[u[0]][u[1]] = True
+        if self.is_in_grid(d) and not self.is_path[d[0]][d[1]]:
+            self.is_used_wall[d[0]][d[1]] = True
+
 
 
 def add_if_missing(element, list):
     if not element in list:
         list.append(element)
     return list
+
+def minmax(n1, n2):
+    smaller = min(n1, n2)
+    larger = max(n1, n2)
+    return smaller, larger
