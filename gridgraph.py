@@ -7,6 +7,7 @@ class GridGraph:
     def __init__(self, width, height):
         self.width = width
         self.height = height
+        self.vertices = []
 
         self.start_location = None
         self.start_location_defined = False
@@ -89,7 +90,13 @@ class GridGraph:
     def out_deg_p(self,xy):
         return self.out_deg(xy[0],xy[1])
 
+    def is_in_grid(self, p):
+        x = p[0]
+        y = p[1]
+        return 0 <= x < self.width and 0 <= y < self.height
+
     # TODO modify to check for removed vertices and paths
+    # Add or remove used walls
     # Iterate through each non-stop part of the path, if it interferes
     # with another path, determine if adj or rev need to be modified or cleared
     # also need to check sides to see if paths are joining by being
@@ -102,7 +109,7 @@ class GridGraph:
     # f will also be converted to a path if it is not - the idea is
     # that you build paths from other paths
     def build_path(self, f, direction, length):
-        if length > 0 and 0 <= f[0] < self.width and 0 <= f[1] < self.height:
+        if length > 0 and self.is_in_grid(f):
             if direction == "R":
                 if f[0] + length >= self.width:
                     self.build(f, (self.width-1, f[1]))
@@ -128,6 +135,7 @@ class GridGraph:
         if not self.start_location == None:
             self.reset_lists()
             self.bfs(self.start_location)
+            self.mark_used_walls()
 
     def reset_lists(self):
         self.adj = []
@@ -144,13 +152,9 @@ class GridGraph:
                 self.rev[i][j] = []
 
     def bfs(self, start):
-        print self.start_location[0]
-        print self.height - 1
         self.bfs_recursive([start], [])
 
     def bfs_recursive(self, queue, visited):
-        print queue
-        print visited
         if len(queue) > 0:
             curr = queue[0]
             l = self.move(curr, "L")
@@ -175,6 +179,8 @@ class GridGraph:
                     add_if_missing(d, queue)
             visited.append(curr)
             self.bfs_recursive(queue[1:], visited)
+        else: # Now we have visited every vertex
+            self.vertices = visited
 
     def add_to_lists(self, f, t):
         adj = self.adj[f[0]][f[1]]
@@ -185,7 +191,7 @@ class GridGraph:
         self.rev[t[0]][t[1]] = new_rev
 
     def move(self, f, direction):
-        if 0 <= f[0] < self.width and 0 <= f[1] < self.height:
+        if self.is_in_grid(f):
             if not self.is_path[f[0]][f[1]]:
                 return None
             elif direction == "R":
@@ -205,7 +211,7 @@ class GridGraph:
                 y = f[1]
                 while y - 1 >= 0 and self.is_path[x][y - 1]:
                     y = y - 1
-                if x == self.end_location and y == 0:
+                if x == self.end_location[0] and y == 0:
                     return f # Going up here will advance to next grid
                 return (x,y)
             elif direction == "D":
@@ -219,6 +225,23 @@ class GridGraph:
             return None #bad direction
         else:
             return None
+
+    def mark_used_walls(self):
+        for p in self.vertices:
+            l = (p[0]-1, p[1])
+            r = (p[0]+1, p[1])
+            u = (p[0], p[1]-1)
+            d = (p[0], p[1]+1)
+            # To be modified with other elements potentially later
+            if self.is_in_grid(l) and not self.is_path[l[0]][l[1]]:
+                self.is_used_wall[l[0]][l[1]] = True
+            if self.is_in_grid(r) and not self.is_path[r[0]][r[1]]:
+                self.is_used_wall[r[0]][r[1]] = True
+            if self.is_in_grid(u) and not self.is_path[u[0]][u[1]]:
+                self.is_used_wall[u[0]][u[1]] = True
+            if self.is_in_grid(d) and not self.is_path[d[0]][d[1]]:
+                self.is_used_wall[d[0]][d[1]] = True
+
 
 def add_if_missing(element, list):
     if not element in list:
