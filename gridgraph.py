@@ -18,30 +18,40 @@ class GridGraph:
         self.adj = []
         self.rev = []
         self.is_path = []
+        self.is_unused_path = []
         self.is_vertex = []
-        self.is_used_wall = []
+        self.is_wall = []
+        self.is_unused_wall = []
         for i in range(width):
             self.adj.append(i)
             self.rev.append(i)
             self.is_path.append(i)
+            self.is_unused_path.append(i)
             self.is_vertex.append(i)
-            self.is_used_wall.append(i)
+            self.is_wall.append(i)
+            self.is_unused_wall.append(i)
             self.adj[i] = []
             self.rev[i] = []
             self.is_path[i] = []
+            self.is_unused_path[i] = []
             self.is_vertex[i] = []
-            self.is_used_wall[i] = []
+            self.is_wall[i] = []
+            self.is_unused_wall[i] = []
             for j in range(height):
                 self.adj[i].append(j)
                 self.rev[i].append(j)
                 self.is_path[i].append(j)
+                self.is_unused_path[i].append(j)
                 self.is_vertex[i].append(j)
-                self.is_used_wall[i].append(j)
+                self.is_wall[i].append(j)
+                self.is_unused_wall[i].append(j)
                 self.adj[i][j] = []
                 self.rev[i][j] = []
                 self.is_path[i][j] = False
+                self.is_unused_path[i][j] = False
                 self.is_vertex[i][j] = False
-                self.is_used_wall[i][j] = False
+                self.is_wall[i][j] = False
+                self.is_unused_wall[i][j] = False
 
     def define_start_location(self, p):
         if not self.start_location_defined:
@@ -51,7 +61,7 @@ class GridGraph:
             for i in range(p[1], self.height):
                 self.is_path[p[0]][i] = True
             if not p[1] == 0:
-                self.is_used_wall[p[0]][p[1]-1] = True
+                self.is_wall[p[0]][p[1]-1] = True
 
     def define_end_location(self, p):
         if not self.end_location_defined:
@@ -121,7 +131,7 @@ class GridGraph:
             return "H" if f[1] == t[1] else "N"
 
     def update_vertex_neighbors(self, p):
-        self.mark_used_walls_p(p)
+        self.mark_walls_p(p)
 
     # Special note about build_path - The length of it does not include the
     # starting point f; the length is the number out from f it goes.
@@ -154,7 +164,7 @@ class GridGraph:
         if not self.start_location == None:
             self.reset_lists()
             self.bfs(self.start_location)
-            self.mark_used_walls()
+            self.mark_walls()
 
     def reset_lists(self):
         self.adj = []
@@ -245,27 +255,57 @@ class GridGraph:
         else:
             return None
 
-    def mark_used_walls(self):
+    def mark_walls(self):
         for p in self.vertices:
-            self.mark_used_walls_p(p)
+            self.mark_walls_p(p)
 
-    def mark_used_walls_p(self, p):
+    def mark_walls_p(self, p):
         l = (p[0]-1, p[1])
         r = (p[0]+1, p[1])
         u = (p[0], p[1]-1)
         d = (p[0], p[1]+1)
         # To be modified with other elements potentially later
         if self.is_in_grid(l) and not self.is_path[l[0]][l[1]]:
-            self.is_used_wall[l[0]][l[1]] = True
+            self.is_wall[l[0]][l[1]] = True
         if self.is_in_grid(r) and not self.is_path[r[0]][r[1]]:
-            self.is_used_wall[r[0]][r[1]] = True
+            self.is_wall[r[0]][r[1]] = True
         if self.is_in_grid(u) and not self.is_path[u[0]][u[1]]:
-            self.is_used_wall[u[0]][u[1]] = True
+            self.is_wall[u[0]][u[1]] = True
         if self.is_in_grid(d) and not self.is_path[d[0]][d[1]]:
-            self.is_used_wall[d[0]][d[1]] = True
+            self.is_wall[d[0]][d[1]] = True
 
     def determine_extra_paths(self, rand):
-        print "Hello"
+        r = self.top_down_range()
+        self.row_interval_assignment(r)
+
+    def top_down_range(self):
+        min = self.width - 1
+        max = 0
+        ranges = []
+        for i in range(self.height):
+            for j in range(self.width):
+                if self.is_path[j][i] or self.is_wall[j][i]:
+                    min = j if j < min else min
+                    max = j if j > max else max
+            ranges.append((min,max))
+        return ranges
+
+    def row_interval_assignment(self, ranges):
+        for i in range(self.height):
+            for j in range(0, ranges[i][0]):
+                if not self.is_wall[j][i]:
+                    self.is_wall[j][i] = True
+                    self.is_unused_wall[j][i] = True
+            for j in range(ranges[i][0], ranges[i][1]+1):
+                if not self.is_wall[j][i]:
+                    if not self.is_path[j][i]:
+                        self.is_path[j][i] = True
+                        self.is_unused_path[j][i] = True
+            for j in range(ranges[i][1]+1, self.width):
+                if not self.is_wall[j][i]:
+                    self.is_wall[j][i] = True
+                    self.is_unused_wall[j][i] = True
+
 
 def add_if_missing(element, list):
     if not element in list:

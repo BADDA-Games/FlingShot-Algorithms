@@ -32,9 +32,9 @@ def create_blocks(entrance, exit, height, difficulty, complexity, key, seed):
     for i in range(height):
         for j in range(width):
             if G.is_path[j][i]:
-                grid[i][j] = "O"
-            elif G.is_used_wall[j][i]:
-                grid[i][j] = "U"
+                grid[i][j] = "o" if G.is_unused_path[j][i] else "O"
+            elif G.is_wall[j][i]:
+                grid[i][j] = "w" if G.is_unused_wall[j][i] else "W"
             else:
                 grid[i][j] = "X"
 
@@ -65,12 +65,13 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
 
     G.build_path((6,1), "D", 8)
 
-    p.print_3d_list(G.adj)
-    print "----------------------------"
-    p.print_3d_list(G.rev)
+    # p.print_3d_list(G.adj)
+    # print "----------------------------"
+    # p.print_3d_list(G.rev)
 
-
+    # p.print_gg(G)
     G.determine_extra_paths(R)
+    # p.print_gg(G)
     return G
 #--------------------------------------
 def floor(n):
@@ -78,7 +79,8 @@ def floor(n):
 #--------------------------------------
 public_seed = 8001
 b = create_blocks(2, 5, 10, 4, 3, False, public_seed)
-p.print_b(b)
+# p.print_b(b)
+p.print_player_view(b)
 
 #--------------------------------------
 # THINGS TO IMPLEMENT
