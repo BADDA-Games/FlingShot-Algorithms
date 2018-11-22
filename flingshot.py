@@ -65,13 +65,7 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
 
     G.build_path((6,1), "D", 8)
 
-    # p.print_3d_list(G.adj)
-    # print "----------------------------"
-    # p.print_3d_list(G.rev)
-
-    # p.print_gg(G)
     G.determine_extra_paths(R)
-    # p.print_gg(G)
     return G
 #--------------------------------------
 def floor(n):
@@ -84,8 +78,6 @@ p.print_player_view(b)
 
 #--------------------------------------
 # THINGS TO IMPLEMENT
-#  Used Walls
-#  - Removal/addition of unimportant walls algorithm
 #  Genrate more complex patterns from existing algorithms
 #  - Path chaining method - arbitrary pattern
 #  Test cases

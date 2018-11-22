@@ -275,8 +275,17 @@ class GridGraph:
             self.is_wall[d[0]][d[1]] = True
 
     def determine_extra_paths(self, rand):
-        r = self.top_down_range()
-        self.row_interval_assignment(r)
+        pattern = rand.generate(1,20)
+        if 1 <= pattern < 9:
+            self.tight_range()
+        elif 9 <= pattern < 13:
+            self.top_down_range()
+        elif 13 <= pattern < 17:
+            self.down_up_range()
+        elif 17 <= pattern < 19:
+            self.left_right_range()
+        else:
+            self.right_left_range()
 
     def top_down_range(self):
         min = self.width - 1
@@ -288,7 +297,71 @@ class GridGraph:
                     min = j if j < min else min
                     max = j if j > max else max
             ranges.append((min,max))
-        return ranges
+        self.row_interval_assignment(ranges)
+
+    def down_up_range(self):
+        min = self.width - 1
+        max = 0
+        ranges = []
+        for i in range(self.height-1, -1, -1):
+            for j in range(self.width):
+                if self.is_path[j][i] or self.is_wall[j][i]:
+                    min = j if j < min else min
+                    max = j if j > max else max
+            ranges.insert(0, (min,max))
+        self.row_interval_assignment(ranges)
+
+    def tight_range(self):
+        ranges = []
+        for i in range(self.height):
+            min = self.width - 1
+            max = 0
+            for j in range(self.width):
+                if self.is_path[j][i] or self.is_wall[j][i]:
+                    min = j if j < min else min
+                    max = j if j > max else max
+            ranges.append((min,max))
+        self.row_interval_assignment(ranges)
+
+    def left_right_range(self):
+        min = self.height - 1
+        max = 0
+        ranges = []
+        for i in range(self.width):
+            for j in range(self.height):
+                if self.is_path[i][j] or self.is_wall[i][j]:
+                    min = j if j < min else min
+                    max = j if j > max else max
+            ranges.append((min, max))
+        self.column_interval_assignment(ranges)
+
+    def right_left_range(self):
+        min = self.height - 1
+        max = 0
+        ranges = []
+        for i in range(self.width-1, -1, -1):
+            for j in range(self.height):
+                if self.is_path[i][j] or self.is_wall[i][j]:
+                    min = j if j < min else min
+                    max = j if j > max else max
+            ranges.insert(0, (min, max))
+        self.column_interval_assignment(ranges)
+
+    def column_interval_assignment(self, ranges):
+        for i in range(self.width):
+            for j in range(0, ranges[i][0]):
+                if not self.is_wall[i][j]:
+                    self.is_wall[i][j] = True
+                    self.is_unused_wall[i][j] = True
+            for j in range(ranges[i][0], ranges[i][1]+1):
+                if not self.is_wall[i][j]:
+                    if not self.is_path[i][j]:
+                        self.is_path[i][j] = True
+                        self.is_unused_path[i][j] = True
+            for j in range(ranges[i][1]+1, self.width):
+                if not self.is_wall[i][j]:
+                    self.is_wall[i][j] = True
+                    self.is_unused_wall[j][i] = True
 
     def row_interval_assignment(self, ranges):
         for i in range(self.height):
