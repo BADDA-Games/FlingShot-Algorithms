@@ -64,8 +64,9 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
     G.build_path((4,9), "L", 10)
 
     G.build_path((6,1), "D", 8)
-
-    G.determine_extra_paths(R)
+    print G.vertices
+    print G.longest_noninterfering_path((1,0), "R")
+    # G.determine_extra_paths(R)
     return G
 #--------------------------------------
 def floor(n):
@@ -78,6 +79,9 @@ p.print_player_view(b)
 
 #--------------------------------------
 # THINGS TO IMPLEMENT
+#  More documentation
+#  Splitting of core data structure gridgraph features and additional utils into separate classes
+#  Used wall preservation, before determine_extra_paths converts interior to path in some fashion
 #  Genrate more complex patterns from existing algorithms
 #  - Path chaining method - arbitrary pattern
 #  Test cases

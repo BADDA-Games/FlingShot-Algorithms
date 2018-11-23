@@ -379,6 +379,109 @@ class GridGraph:
                     self.is_wall[j][i] = True
                     self.is_unused_wall[j][i] = True
 
+    def longest_noninterfering_path(self, f, direction):
+        """
+        Determines the length of the longest path from, ideally
+        another vertex in place, in a direction, without consideration
+        of the rest of the part of the graph connecting it, only
+        stopping if it will interfere with another vertex as it grows
+        outward. That is, if there is already a path going in the exact
+        opposite way out of the vertex then this algorithm does not care
+        """
+        if self.is_in_grid(f):
+            x = f[0]
+            y = f[1]
+            if not self.is_path[x][y]:
+                neighbors = [(x,y+1), (x,y-1), (x+1, y), (x-1, y)]
+                for i in neighbors:
+                    if i in self.vertices:
+                        return None
+            if direction == "R":
+                length = 0
+                while True:
+                    if self.is_in_grid((x+1, y)):
+                        # If neighbors of the next part of the path are vertices, stop.
+                        if self.is_path[x+1][y]:
+                            x = x + 1
+                            length = length + 1
+                            continue
+                        elif self.is_in_grid((x+1, y+1)) and (x+1, y+1) in self.vertices:
+                            return length
+                        elif self.is_in_grid((x+1, y-1)) and (x+1, y-1) in self.vertices:
+                            return length
+                        elif self.is_in_grid((x+2, y)) and (x+2, y) in self.vertices:
+                            return length
+                        else:
+                            x = x + 1
+                            length = length + 1
+                    else:
+                        return length
+            if direction == "L":
+                length = 0
+                while True:
+                    if self.is_in_grid((x-1, y)):
+                        # If neighbors of the next part of the path are vertices, stop.
+                        if self.is_path[x-1][y]:
+                            x = x - 1
+                            length = length + 1
+                            continue
+                        elif self.is_in_grid((x-1, y+1)) and (x-1, y+1) in self.vertices:
+                            return length
+                        elif self.is_in_grid((x-1, y-1)) and (x-1, y-1) in self.vertices:
+                            return length
+                        elif self.is_in_grid((x-2, y)) and (x-2, y) in self.vertices:
+                            return length
+                        else:
+                            x = x - 1
+                            length = length + 1
+                    else:
+                        return length
+            if direction == "U":
+                length = 0
+                while True:
+                    if self.is_in_grid((x, y-1)):
+                        # If neighbors of the next part of the path are vertices, stop.
+                        if self.is_path[x][y-1]:
+                            y = y - 1
+                            length = length + 1
+                            continue
+                        elif self.is_in_grid((x+1, y-1)) and (x+1, y-1) in self.vertices:
+                            return length
+                        elif self.is_in_grid((x-1, y-1)) and (x-1, y-1) in self.vertices:
+                            return length
+                        elif self.is_in_grid((x, y-2)) and (x, y-2) in self.vertices:
+                            return length
+                        else:
+                            y = y - 1
+                            length = length + 1
+                    else:
+                        return length
+            if direction == "D":
+                length = 0
+                while True:
+                    if self.is_in_grid((x, y+1)):
+                        # If neighbors of the next part of the path are vertices, stop.
+                        if self.is_path[x][y+1]:
+                            y = y + 1
+                            length = length + 1
+                            continue
+                        elif self.is_in_grid((x+1, y+1)) and (x+1, y+1) in self.vertices:
+                            return length
+                        elif self.is_in_grid((x-1, y+1)) and (x-1, y+1) in self.vertices:
+                            return length
+                        elif self.is_in_grid((x, y+2)) and (x, y+2) in self.vertices:
+                            return length
+                        else:
+                            y = y + 1
+                            length = length + 1
+                    else:
+                        return length
+        else:
+            return None
+
+    def longest_nonintrusive_path(self, f, direction):
+        return None
+
 
 def add_if_missing(element, list):
     if not element in list:
