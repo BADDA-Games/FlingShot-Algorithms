@@ -5,6 +5,11 @@ class GridGraph:
     # Each vertex has an (x,y) position, with y=0 on top
 
     def __init__(self, width, height):
+        """
+        Implicitly called upon creation of a GridGraph object. Sets all of the
+        variables to default and starter values. Defines every variable used
+        in the data structure.
+        """
         self.width = width
         self.height = height
         self.vertices = []
@@ -54,6 +59,10 @@ class GridGraph:
                 self.is_unused_wall[i][j] = False
 
     def define_start_location(self, p):
+        """
+        Sets the start location parameter of the GridGraph, or does nothing
+        if it was already set. This method should be called soon after creation.
+        """
         if not self.start_location_defined:
             self.start_location_defined = True
             self.start_location = p
@@ -64,6 +73,10 @@ class GridGraph:
                 self.is_wall[p[0]][p[1]-1] = True
 
     def define_end_location(self, p):
+        """
+        Sets the end location parameter of the GridGraph, or does nothing
+        if it was already set. This method should be called soon after creation.
+        """
         if not self.end_location_defined:
             self.end_location_defined = True
             self.end_location = p
@@ -72,6 +85,11 @@ class GridGraph:
                 self.is_path[p[0]][i] = True
 
     def add_edge(self, f, t):
+        """
+        Adds an edge between f and t to the grid, without updating any lists or
+        meta variables, but simply changing all middle paths is_path flags to
+        True. Does nothing if the path is not in a straight line.
+        """
         if not self.path_orientation(f, t) == "N":
             if self.path_orientation(f, t) == "V" or self.path_orientation(f, t) == "P":
                 current = min(f[1], t[1])
@@ -85,19 +103,37 @@ class GridGraph:
                     current = current + 1
 
     def in_deg(self,x,y):
+        """
+        Returns the in-degree of a point (x,y), the number of vertices that can
+        immediately move to (x,y)
+        """
         return len(self.rev[x][y])
 
     def in_deg_p(self,xy):
+        """
+        Returns the in-degree of a point xy, the number of vertices that can
+        immediately move to xy
+        """
         return self.in_deg(xy[0],xy[1])
 
-    # Max out degree can be 3, min 0
     def out_deg(self,x,y):
+        """
+        Returns the out-degree of a point (x,y), the number of vertices it can
+        immediately move to
+        """
         return len(self.adj[x][y])
 
     def out_deg_p(self,xy):
+        """
+        Returns the out-degree of a point xy, the number of vertices it can
+        immediately move to
+        """
         return self.out_deg(xy[0],xy[1])
 
     def is_in_grid(self, p):
+        """
+        Returns true if point p is in the grid space, false if it is not
+        """
         x = p[0]
         y = p[1]
         return 0 <= x < self.width and 0 <= y < self.height
@@ -105,12 +141,25 @@ class GridGraph:
     # TODO use update_path sides to update the grid without
     # doing a whole traversal
     def build(self, f, t):
+        """
+        Adds an edge from point f to point t, then traverses the graph and
+        sets all variables properly to accomodate for the new edge.
+        """
         self.add_edge(f,t)
         self.traverse() #inefficient, but works
         # self.update_path_sides(f, t)
 
     #TODO
     def update_path_sides(self, f, t):
+        """
+        As of right now, this method is unfinished and deprecated.
+        If completed, it should properly update all variables in the graph
+        to represent a new edge added properly, including new constructions of
+        walls, and all changes in the adjacency and reverse listed, even
+        changes affecting other neighboring paths which get changed as a
+        result of the new edge. As of right now, we consider this by simply
+        re-traversing the entire graph every time an edge is added.
+        """
         self.update_vertex_neighbors(f)
         self.update_vertex_neighbors(t)
         if self.path_orientation(f, t) == "V":
@@ -125,19 +174,31 @@ class GridGraph:
             print ""
 
     def path_orientation(self, f, t):
+        """
+        Given two points f and t, return P if they are the same point, V
+        if they form a vertical line in the grid, H if they form a horizontal
+        line in the grid, or N if they form neither
+        """
         if f[0] == t[0]: # Same x values
             return "P" if f[1] == t[1] else "V"
         else: # Same y values
             return "H" if f[1] == t[1] else "N"
 
     def update_vertex_neighbors(self, p):
+        """
+        The complete process for setting relevant parameters for every vertex,
+        usually called in the traversal pipeline
+        """
         self.mark_walls_p(p)
 
-    # Special note about build_path - The length of it does not include the
-    # starting point f; the length is the number out from f it goes.
-    # f will also be converted to a path if it is not - the idea is
-    # that you build paths from other paths
     def build_path(self, f, direction, length):
+        """
+        Builds a path starting from a point f, in the direction specified,
+        until it reaches the edge of the graph or we have built it length
+        squares out from the start. It's important to note the length does not
+        include the starting space, a path which spans length one occupies two
+        grid spaces.
+        """
         if length > 0 and self.is_in_grid(f):
             if direction == "R":
                 if f[0] + length >= self.width:
@@ -161,12 +222,21 @@ class GridGraph:
                     self.build(f, (f[0], f[1]+length))
 
     def traverse(self):
+        """
+        Traversal method for determining the structure of the graph, including
+        vertices, edges, walls, and their positions. May be called frequently
+        to ensure that the graph is built correctly
+        """
         if not self.start_location == None:
             self.reset_lists()
             self.bfs(self.start_location)
             self.mark_walls()
 
     def reset_lists(self):
+        """
+        Removes all elements from self.adj and self.rev and defaults them to
+        empty twice-indicied lists.
+        """
         self.adj = []
         self.rev = []
         for i in range(self.width):
@@ -181,9 +251,22 @@ class GridGraph:
                 self.rev[i][j] = []
 
     def bfs(self, start):
+        """
+        Sets up a recursive call to compute the bfs of the graph starting from
+        the start point, usually self.start_location
+        """
         self.bfs_recursive([start], [])
 
     def bfs_recursive(self, queue, visited):
+        """
+        Computes the breadth first search of the graph, taking the first element
+        from the queue, moving in all directions with it, and if it discovers
+        a vertex not in the queue and not visited, adds it to the back of the
+        queue. After traversing all directions, that first element is added to
+        visited. If the queue is empty, we have visited every vertex, and
+        visited now holds a list of all vertices. Therefore we assign to the
+        vertices field the visited list.
+        """
         if len(queue) > 0:
             curr = queue[0]
             l = self.move(curr, "L")
@@ -212,6 +295,11 @@ class GridGraph:
             self.vertices = visited
 
     def add_to_lists(self, f, t):
+        """
+        Given a from point and a to point, adds them to the adjacency list
+        and reverse list. Ideally this will get called when creating a new
+        path and connecting the two vertices in the graph.
+        """
         adj = self.adj[f[0]][f[1]]
         new_adj = add_if_missing(t, adj)
         self.adj[f[0]][f[1]] = new_adj
@@ -220,6 +308,12 @@ class GridGraph:
         self.rev[t[0]][t[1]] = new_rev
 
     def move(self, f, direction):
+        """
+        Starting at a point f, this algorithm will iteratively move in
+        a cardinal direction until it reaches the edge of the grid or
+        interferes with a wall. It returns the stopping point
+        (may potentially) also be the same as f.
+        """
         if self.is_in_grid(f):
             if not self.is_path[f[0]][f[1]]:
                 return None
@@ -256,10 +350,20 @@ class GridGraph:
             return None
 
     def mark_walls(self):
+        """
+        Sets up walls adjacent all vertices, ensuring that no paths outside our
+        graph can be traversed, preserving many essential properties of the
+        procedurally generating algorithm.
+        """
         for p in self.vertices:
             self.mark_walls_p(p)
 
     def mark_walls_p(self, p):
+        """
+        Marks walls adjacent to point p (not including diagonals), as walls, if
+        they are not already paths. This method usually gets called on a new
+        vertex to set up the surrounding blocking walls.
+        """
         l = (p[0]-1, p[1])
         r = (p[0]+1, p[1])
         u = (p[0], p[1]-1)
@@ -275,6 +379,9 @@ class GridGraph:
             self.is_wall[d[0]][d[1]] = True
 
     def determine_extra_paths(self, rand):
+        """
+        Pseudorandomly determines which pattern to build additional paths in
+        """
         pattern = rand.generate(1,20)
         if 1 <= pattern < 9:
             self.tight_range()
@@ -288,6 +395,11 @@ class GridGraph:
             self.right_left_range()
 
     def top_down_range(self):
+        """
+        Creates a non-shrinking list of ranges that encapsulate the walls and
+        paths at each height, starting at the top and fitting it in the
+        tightest range possible but never decreasing the bounds of the range
+        """
         min = self.width - 1
         max = 0
         ranges = []
@@ -300,6 +412,13 @@ class GridGraph:
         self.row_interval_assignment(ranges)
 
     def down_up_range(self):
+        """
+        Creates a non-growing list of ranges that encapsulates the walls and
+        paths at each height, starting from the bottom, fitting it in the
+        tightest range possible, then working its way to the top but never
+        decreasing the bounds of the range. Subsequent ranges are inserted
+        at the start of the list to preserve order.
+        """
         min = self.width - 1
         max = 0
         ranges = []
@@ -312,6 +431,10 @@ class GridGraph:
         self.row_interval_assignment(ranges)
 
     def tight_range(self):
+        """
+        Creates a list of ranges at each height which enclose all walls and paths
+        in the tightest manner possible.
+        """
         ranges = []
         for i in range(self.height):
             min = self.width - 1
@@ -324,6 +447,11 @@ class GridGraph:
         self.row_interval_assignment(ranges)
 
     def left_right_range(self):
+        """
+        Creates a non-shrinking list of ranges by starting on the left, finding
+        the tightest range enclosing all walls and paths, and computing iteratively
+        to increase the bounds of the next range or to repeat the previous ones.
+        """
         min = self.height - 1
         max = 0
         ranges = []
@@ -336,6 +464,12 @@ class GridGraph:
         self.column_interval_assignment(ranges)
 
     def right_left_range(self):
+        """
+        Creates a non-growing list of ranges by taking the smallest range
+        enclosing the right-most column, and only expanding it as it computes
+        the smallest ranges leftward, and inserting the maxima of the previous
+        result and the new result at the start of the range list.
+        """
         min = self.height - 1
         max = 0
         ranges = []
@@ -348,6 +482,11 @@ class GridGraph:
         self.column_interval_assignment(ranges)
 
     def column_interval_assignment(self, ranges):
+        """
+        Given a list of self.width tuples, converts all non-determined
+        grid spaces on the ith height in the range of the ith tuple to paths,
+        and converts the remainder (outside the range) to walls.
+        """
         for i in range(self.width):
             for j in range(0, ranges[i][0]):
                 if not self.is_wall[i][j]:
@@ -364,6 +503,11 @@ class GridGraph:
                     self.is_unused_wall[j][i] = True
 
     def row_interval_assignment(self, ranges):
+        """
+        Given a list of self.height tuples, converts all non-determined
+        grid spaces on the ith height in the range of the ith tuple to paths,
+        and converts the remainder (outside the range) to walls.
+        """
         for i in range(self.height):
             for j in range(0, ranges[i][0]):
                 if not self.is_wall[j][i]:
@@ -386,7 +530,7 @@ class GridGraph:
         of the rest of the part of the graph connecting it, only
         stopping if it will interfere with another vertex as it grows
         outward. That is, if there is already a path going in the exact
-        opposite way out of the vertex then this algorithm does not care
+        opposite way out of the vertex then this algorithm does not care.
         """
         if self.is_in_grid(f):
             x = f[0]
@@ -482,13 +626,18 @@ class GridGraph:
     def longest_nonintrusive_path(self, f, direction):
         return None
 
-
 def add_if_missing(element, list):
+    """
+    Appends an item to a list if it does not exist in the list already
+    """
     if not element in list:
         list.append(element)
     return list
 
 def minmax(n1, n2):
+    """
+    Helper function which returns the min and max of two numbers with one call
+    """
     smaller = min(n1, n2)
     larger = max(n1, n2)
     return smaller, larger
