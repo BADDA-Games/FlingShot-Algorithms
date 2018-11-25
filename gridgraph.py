@@ -314,9 +314,25 @@ class GridGraph:
             self.vertices = visited
 
     def fastest_path(self):
-        return self.shortest_path(self.start_location, self.end_location)
+        """
+        Computes the length of the fastest path to get from the start
+        location to any valid ending location, including those above
+        the specified end_location.
+        """
+        x = self.end_location[0]
+        y = self.end_location[1]
+        v = self.vertices_x(x)
+        list = []
+        for i in v:
+            if i[1] <= y:
+                list.append(i)
+        return self.shortest_paths(self.start_location, list )
 
     def shortest_path(self, start, end):
+        """
+        Returns the fewest number of moves required to get from start to end
+        by using a bfs strategy.
+        """
         if start in self.vertices and end in self.vertices:
             if start == end:
                 return 0
@@ -336,10 +352,43 @@ class GridGraph:
                             visited.append(j)
                 queue = next
                 distance = distance + 1
+            return None
+        else:
+            return None
+
+    def shortest_paths(self, start, ends):
+        """
+        Returns the fewest number of moves required to get from start to
+        any of the vertices in ends by using a bfs strategy.
+        """
+        if start in self.vertices:
+            if start in ends:
+                return 0
+            distance = 1
+            visited = [start]
+            queue = [start]
+            while len(queue) > 0:
+                next = []
+                for i in queue:
+                    neighbors = self.adj[i[0]][i[1]]
+                    for j in neighbors:
+                        if not j in visited:
+                            if j in ends:
+                                return distance
+                            if not i == j:
+                                next.append(j)
+                            visited.append(j)
+                queue = next
+                distance = distance + 1
+            return None
         else:
             return None
 
     def vertices_x(self, x):
+        """
+        Returns all points in the vertices list which
+        have the corresponding x value passed in
+        """
         list = []
         for v in self.vertices:
             if x == v[0]:
@@ -347,6 +396,10 @@ class GridGraph:
         return list
 
     def vertices_y(self, y):
+        """
+        Returns all points in the vertices list which
+        have the corresponding y value passed in
+        """
         list = []
         for v in self.vertices:
             if y == v[1]:
@@ -728,9 +781,15 @@ def minmax(n1, n2):
     return smaller, larger
 
 def sort_tuples_x(list):
+    """
+    Sorts a lists of tuples by the value of their first index
+    """
     list.sort(key = lambda x: x[0])
     return list
 
 def sort_tuples_y(list):
+    """
+    Sorts a lists of tuples by the value of their second index
+    """
     list.sort(key = lambda x: x[1])
     return list
