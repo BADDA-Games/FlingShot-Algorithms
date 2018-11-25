@@ -64,10 +64,9 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
     G.build_path((4,9), "L", 10)
 
     G.build_path((6,1), "D", 8)
-    print G.vertices
-    print G.longest_noninterfering_path((1,0), "R")
-    # G.determine_extra_paths(R)
-    return G
+
+    o = G.deep_copy()
+    return o
 #--------------------------------------
 def floor(n):
     return int(n//1)

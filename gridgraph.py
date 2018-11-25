@@ -58,6 +58,25 @@ class GridGraph:
                 self.is_wall[i][j] = False
                 self.is_unused_wall[i][j] = False
 
+    def deep_copy(self):
+        """
+        Creates a deep copy of the current GridGraph data structure
+        """
+        other = GridGraph(self.width, self.height)
+        other.vertices = self.vertices
+        other.start_location = self.start_location
+        other.start_location_defined = self.start_location_defined
+        other.end_location = self.end_location
+        other.end_location_defined = self.end_location_defined
+        other.adj = self.adj
+        other.rev = self.rev
+        other.is_path = self.is_path
+        other.is_unused_path = self.is_unused_path
+        other.is_vertex = self.is_vertex
+        other.is_wall = self.is_wall
+        other.is_unused_wall = self.is_unused_wall
+        return other
+
     def define_start_location(self, p):
         """
         Sets the start location parameter of the GridGraph, or does nothing
