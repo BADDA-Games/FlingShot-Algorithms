@@ -405,18 +405,23 @@ class GridGraph:
         ranges = []
         if 1 <= pattern < 9:
             ranges = self.tight_range()
+            self.keep_walls_row(ranges, rand)
             self.row_interval_assignment(ranges)
         elif 9 <= pattern < 13:
             ranges = self.top_down_range()
+            self.keep_walls_row(ranges, rand)
             self.row_interval_assignment(ranges)
         elif 13 <= pattern < 17:
             ranges = self.down_up_range()
+            self.keep_walls_row(ranges, rand)
             self.row_interval_assignment(ranges)
         elif 17 <= pattern < 19:
             ranges = self.left_right_range()
+            self.keep_walls_column(ranges, rand)
             self.column_interval_assignment(ranges)
         else:
             ranges = self.right_left_range()
+            self.keep_walls_column(ranges, rand)
             self.column_interval_assignment(ranges)
 
     def top_down_range(self):
@@ -548,8 +553,19 @@ class GridGraph:
                     self.is_wall[j][i] = True
                     self.is_unused_wall[j][i] = True
 
-    def keep_walls(self, rand):
-        return None
+    def keep_walls_row(self, ranges, rand):
+        for i in range(self.height):
+            for j in range(ranges[i][0], ranges[i][1]+1):
+                if not self.is_wall[j][i] and not self.is_path[j][i]:
+                    if rand.generate(0, 1) == 1:
+                        self.is_wall[j][i] = True
+
+    def keep_walls_column(self, ranges, rand):
+        for i in range(self.width):
+            for j in range(ranges[i][0], ranges[i][1]+1):
+                if not self.is_wall[i][j] and not self.is_path[i][j]:
+                    if rand.generate(0,1) == 1:
+                        self.is_wall[i][j] = True
 
     def longest_noninterfering_path(self, f, direction):
         """

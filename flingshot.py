@@ -73,7 +73,7 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
 def floor(n):
     return int(n//1)
 #--------------------------------------
-public_seed = 1111
+public_seed = 1132
 b = create_blocks(2, 5, 10, 4, 3, False, public_seed)
 # p.print_b(b)
 p.print_player_view(b)
