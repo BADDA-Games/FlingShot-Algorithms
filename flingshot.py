@@ -65,7 +65,10 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
 
     G.build_path((6,1), "D", 8)
 
-    G.determine_extra_paths(R)
+    # G.determine_extra_paths(R)
+    v = G.vertices
+    print v
+    print gg.sort_tuples_y(v)
 
     o = G.deep_copy()
     return o
@@ -73,7 +76,7 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
 def floor(n):
     return int(n//1)
 #--------------------------------------
-public_seed = 1132
+public_seed = 1145
 b = create_blocks(2, 5, 10, 4, 3, False, public_seed)
 # p.print_b(b)
 p.print_player_view(b)

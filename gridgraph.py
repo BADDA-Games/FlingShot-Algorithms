@@ -313,6 +313,23 @@ class GridGraph:
         else: # Now we have visited every vertex
             self.vertices = visited
 
+    def shortest_path(self):
+        return None
+
+    def vertices_x(self, x):
+        list = []
+        for v in self.vertices:
+            if x == v[0]:
+                list.append(v)
+        return list
+
+    def vertices_y(self, y):
+        list = []
+        for v in self.vertices:
+            if y == v[1]:
+                list.append(v)
+        return list
+
     def add_to_lists(self, f, t):
         """
         Given a from point and a to point, adds them to the adjacency list
@@ -667,6 +684,7 @@ class GridGraph:
         else:
             return None
 
+    #TODO
     def longest_nonintrusive_path(self, f, direction):
         return None
 
@@ -685,3 +703,11 @@ def minmax(n1, n2):
     smaller = min(n1, n2)
     larger = max(n1, n2)
     return smaller, larger
+
+def sort_tuples_x(list):
+    list.sort(key = lambda x: x[0])
+    return list
+
+def sort_tuples_y(list):
+    list.sort(key = lambda x: x[1])
+    return list
