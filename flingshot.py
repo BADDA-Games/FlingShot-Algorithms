@@ -65,20 +65,21 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
 
     G.build_path((6,1), "D", 8)
 
+    G.determine_extra_paths(R)
+
     o = G.deep_copy()
     return o
 #--------------------------------------
 def floor(n):
     return int(n//1)
 #--------------------------------------
-public_seed = 8001
+public_seed = 1111
 b = create_blocks(2, 5, 10, 4, 3, False, public_seed)
 # p.print_b(b)
 p.print_player_view(b)
 
 #--------------------------------------
 # THINGS TO IMPLEMENT
-#  More documentation
 #  Splitting of core data structure gridgraph features and additional utils into separate classes
 #  Used wall preservation, before determine_extra_paths converts interior to path in some fashion
 #  Genrate more complex patterns from existing algorithms

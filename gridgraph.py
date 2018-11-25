@@ -402,16 +402,22 @@ class GridGraph:
         Pseudorandomly determines which pattern to build additional paths in
         """
         pattern = rand.generate(1,20)
+        ranges = []
         if 1 <= pattern < 9:
-            self.tight_range()
+            ranges = self.tight_range()
+            self.row_interval_assignment(ranges)
         elif 9 <= pattern < 13:
-            self.top_down_range()
+            ranges = self.top_down_range()
+            self.row_interval_assignment(ranges)
         elif 13 <= pattern < 17:
-            self.down_up_range()
+            ranges = self.down_up_range()
+            self.row_interval_assignment(ranges)
         elif 17 <= pattern < 19:
-            self.left_right_range()
+            ranges = self.left_right_range()
+            self.column_interval_assignment(ranges)
         else:
-            self.right_left_range()
+            ranges = self.right_left_range()
+            self.column_interval_assignment(ranges)
 
     def top_down_range(self):
         """
@@ -428,7 +434,7 @@ class GridGraph:
                     min = j if j < min else min
                     max = j if j > max else max
             ranges.append((min,max))
-        self.row_interval_assignment(ranges)
+        return ranges
 
     def down_up_range(self):
         """
@@ -447,7 +453,7 @@ class GridGraph:
                     min = j if j < min else min
                     max = j if j > max else max
             ranges.insert(0, (min,max))
-        self.row_interval_assignment(ranges)
+        return ranges
 
     def tight_range(self):
         """
@@ -463,7 +469,7 @@ class GridGraph:
                     min = j if j < min else min
                     max = j if j > max else max
             ranges.append((min,max))
-        self.row_interval_assignment(ranges)
+        return ranges
 
     def left_right_range(self):
         """
@@ -480,7 +486,7 @@ class GridGraph:
                     min = j if j < min else min
                     max = j if j > max else max
             ranges.append((min, max))
-        self.column_interval_assignment(ranges)
+        return ranges
 
     def right_left_range(self):
         """
@@ -498,7 +504,7 @@ class GridGraph:
                     min = j if j < min else min
                     max = j if j > max else max
             ranges.insert(0, (min, max))
-        self.column_interval_assignment(ranges)
+        return ranges
 
     def column_interval_assignment(self, ranges):
         """
@@ -541,6 +547,9 @@ class GridGraph:
                 if not self.is_wall[j][i]:
                     self.is_wall[j][i] = True
                     self.is_unused_wall[j][i] = True
+
+    def keep_walls(self, rand):
+        return None
 
     def longest_noninterfering_path(self, f, direction):
         """

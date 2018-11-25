@@ -8,10 +8,10 @@ def print_player_view(blocks):
     for i in range(len(blocks)):
         for j in range(len(blocks[0])):
             symbol = blocks[i][j]
-            if symbol == "w" or symbol == "W" or symbol == "X":
-                print "X",
+            if symbol == "w" or symbol == "W":
+                print "\033[91m" + "X" + "\x1b[0m",
             elif symbol == "o" or symbol == "O":
-                print "O",
+                print "\033[92m" + "O" + "\x1b[0m",
             else:
                 print "X",
         print ""
