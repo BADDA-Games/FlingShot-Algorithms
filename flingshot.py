@@ -62,8 +62,13 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
     G.build_path((entrance, starting_height), "R", 2)
     G.build_path((4,2), "D", 10)
     G.build_path((4,9), "L", 10)
-
     G.build_path((6,1), "D", 8)
+
+    G.build_path((6,9), "R", 1)
+    G.build_path((7,9), "U", 2)
+    G.build_path((7,7), "L", 7)
+    G.build_path((0,7), "U", 4)
+    G.build_path((0,3), "R", 4)
 
     # G.determine_extra_paths(R)
     print G.fastest_path()

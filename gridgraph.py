@@ -230,12 +230,12 @@ class GridGraph:
                 else:
                     self.build(f, (f[0]-length, f[1]))
             if direction == "U":
-                if f[0] - length < 0:
+                if f[1] - length < 0:
                     self.build(f, (f[0], 0))
                 else:
                     self.build(f, (f[0], f[1]-length))
             if direction == "D":
-                if f[0] + length >= self.height:
+                if f[1] + length >= self.height:
                     self.build(f, (f[0], self.height-1))
                 else:
                     self.build(f, (f[0], f[1]+length))
