@@ -313,8 +313,31 @@ class GridGraph:
         else: # Now we have visited every vertex
             self.vertices = visited
 
-    def shortest_path(self):
-        return None
+    def fastest_path(self):
+        return self.shortest_path(self.start_location, self.end_location)
+
+    def shortest_path(self, start, end):
+        if start in self.vertices and end in self.vertices:
+            if start == end:
+                return 0
+            distance = 1
+            visited = [start]
+            queue = [start]
+            while len(queue) > 0:
+                next = []
+                for i in queue:
+                    neighbors = self.adj[i[0]][i[1]]
+                    for j in neighbors:
+                        if not j in visited:
+                            if j == end:
+                                return distance
+                            if not i == j:
+                                next.append(j)
+                            visited.append(j)
+                queue = next
+                distance = distance + 1
+        else:
+            return None
 
     def vertices_x(self, x):
         list = []

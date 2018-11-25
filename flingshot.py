@@ -66,9 +66,7 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
     G.build_path((6,1), "D", 8)
 
     # G.determine_extra_paths(R)
-    v = G.vertices
-    print v
-    print gg.sort_tuples_y(v)
+    print G.fastest_path()
 
     o = G.deep_copy()
     return o
