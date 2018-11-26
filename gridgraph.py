@@ -1,3 +1,5 @@
+import util
+
 class GridGraph:
     # A class to show how positions on the grid
     # direct to possible neighboring positions
@@ -182,12 +184,12 @@ class GridGraph:
         self.update_vertex_neighbors(f)
         self.update_vertex_neighbors(t)
         if self.path_orientation(f, t) == "V":
-            min, max = minmax(f[1], t[1])
+            min, max = util.minmax(f[1], t[1])
             for i in range(min, max+1):
                 print (f[0], i),
             print ""
         elif self.path_orientation(f, t) == "H":
-            min, max = minmax(f[0], t[0])
+            min, max = util.minmax(f[0], t[0])
             for i in range(min, max+1):
                 print (i, f[1]),
             print ""
@@ -295,19 +297,19 @@ class GridGraph:
             if not l == None:
                 self.add_to_lists(curr, l)
                 if not l in visited:
-                    add_if_missing(l, queue)
+                    util.add_if_missing(l, queue)
             if not r == None:
                 self.add_to_lists(curr, r)
                 if not r in visited:
-                    add_if_missing(r, queue)
+                    util.add_if_missing(r, queue)
             if not u == None:
                 self.add_to_lists(curr, u)
                 if not u in visited:
-                    add_if_missing(u, queue)
+                    util.add_if_missing(u, queue)
             if not d == None:
                 self.add_to_lists(curr, d)
                 if not d in visited:
-                    add_if_missing(d, queue)
+                    util.add_if_missing(d, queue)
             visited.append(curr)
             self.bfs_recursive(queue[1:], visited)
         else: # Now we have visited every vertex
@@ -413,11 +415,9 @@ class GridGraph:
         path and connecting the two vertices in the graph.
         """
         adj = self.adj[f[0]][f[1]]
-        new_adj = add_if_missing(t, adj)
-        self.adj[f[0]][f[1]] = new_adj
+        util.add_if_missing(t, adj)
         rev = self.rev[t[0]][t[1]]
-        new_rev = add_if_missing(f, rev)
-        self.rev[t[0]][t[1]] = new_rev
+        util.add_if_missing(f, rev)
 
     def move(self, f, direction):
         """
@@ -763,33 +763,3 @@ class GridGraph:
     #TODO
     def longest_nonintrusive_path(self, f, direction):
         return None
-
-def add_if_missing(element, list):
-    """
-    Appends an item to a list if it does not exist in the list already
-    """
-    if not element in list:
-        list.append(element)
-    return list
-
-def minmax(n1, n2):
-    """
-    Helper function which returns the min and max of two numbers with one call
-    """
-    smaller = min(n1, n2)
-    larger = max(n1, n2)
-    return smaller, larger
-
-def sort_tuples_x(list):
-    """
-    Sorts a lists of tuples by the value of their first index
-    """
-    list.sort(key = lambda x: x[0])
-    return list
-
-def sort_tuples_y(list):
-    """
-    Sorts a lists of tuples by the value of their second index
-    """
-    list.sort(key = lambda x: x[1])
-    return list

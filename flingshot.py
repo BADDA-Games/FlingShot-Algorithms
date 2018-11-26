@@ -1,6 +1,7 @@
 import gridgraph as gg
 import printer as p
 import random as rand
+import util
 
 def create_blocks(entrance, exit, height, difficulty, complexity, key, seed):
     # TODO move the majority of this function somewhere else; the algorithm should be its own method
@@ -8,11 +9,11 @@ def create_blocks(entrance, exit, height, difficulty, complexity, key, seed):
         height = 4
     width = 9
 
-    entrance = floor(entrance)
-    exit = floor(exit)
-    height = floor(height)
-    difficulty = floor(difficulty)
-    complexity = floor(complexity)
+    entrance = util.floor(entrance)
+    exit = util.floor(exit)
+    height = util.floor(height)
+    difficulty = util.floor(difficulty)
+    complexity = util.floor(complexity)
 
     grid = []
     #Default to a blocked play area
@@ -76,9 +77,6 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
     o = G.deep_copy()
     return o
 #--------------------------------------
-def floor(n):
-    return int(n//1)
-#--------------------------------------
 public_seed = 1145
 b = create_blocks(2, 5, 10, 4, 3, False, public_seed)
 # p.print_b(b)
@@ -87,7 +85,6 @@ p.print_player_view(b)
 #--------------------------------------
 # THINGS TO IMPLEMENT
 #  Splitting of core data structure gridgraph features and additional utils into separate classes
-#  Used wall preservation, before determine_extra_paths converts interior to path in some fashion
 #  Genrate more complex patterns from existing algorithms
 #  - Path chaining method - arbitrary pattern
 #  Test cases
