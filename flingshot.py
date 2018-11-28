@@ -72,7 +72,7 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
     G.build_path((0,3), "R", 4)
 
     # G.determine_extra_paths(R)
-    print G.fastest_path()
+    # print G.fastest_path()
 
     o = G.deep_copy()
     return o

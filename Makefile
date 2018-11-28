@@ -1,7 +1,7 @@
 make:
 	python flingshot.py
 
-test:
+t:
 	python test.py
 
 clean:
