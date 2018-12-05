@@ -84,26 +84,28 @@ class GridGraph:
         Sets the start location parameter of the GridGraph, or does nothing
         if it was already set. This method should be called soon after creation.
         """
-        if not self.start_location_defined:
-            self.start_location_defined = True
-            self.start_location = p
-            self.add_edge(p, p)
-            for i in range(p[1], self.height):
-                self.is_path[p[0]][i] = True
-            if not p[1] == 0:
-                self.is_wall[p[0]][p[1]-1] = True
+        if self.is_in_grid(p):
+            if not self.start_location_defined:
+                self.start_location_defined = True
+                self.start_location = p
+                self.add_edge(p, p)
+                for i in range(p[1], self.height):
+                    self.is_path[p[0]][i] = True
+                self.mark_walls_p(p)
 
     def define_end_location(self, p):
         """
         Sets the end location parameter of the GridGraph, or does nothing
         if it was already set. This method should be called soon after creation.
         """
-        if not self.end_location_defined:
-            self.end_location_defined = True
-            self.end_location = p
-            self.add_edge(p, p)
-            for i in range(0, p[1]):
-                self.is_path[p[0]][i] = True
+        if self.is_in_grid(p):
+            if not self.end_location_defined:
+                self.end_location_defined = True
+                self.end_location = p
+                self.add_edge(p, p)
+                for i in range(0, p[1]):
+                    self.is_path[p[0]][i] = True
+                self.mark_walls_p(p)
 
     def add_edge(self, f, t):
         """
@@ -661,6 +663,9 @@ class GridGraph:
                         self.is_wall[i][j] = True
 
     def longest_noninterfering_path(self, f, direction):
+        #TODO when you start from a vertex, there will be walls. Make sure
+        #this method knows to look out for them, but still consider if those
+        # are also walls for another vertex.
         """
         Determines the length of the longest path from, ideally
         another vertex in place, in a direction, without consideration
@@ -762,4 +767,16 @@ class GridGraph:
 
     #TODO
     def longest_nonintrusive_path(self, f, direction):
+        """
+        Determines the length of the longest path, starting at a point f,
+        as long adding the path does not eliminate edges. Note that this is
+        different from longest_noninterfering_path, as it does not allow
+        for ANY changes in vertices. In this one the vertex may change, but if
+        it does then all the edges and paths must still be present. No degrees
+        should be lessened. Adding the edge must keep the maze in a solvable state, if
+        it is already.
+        """
+        return None
+
+    def generate_basic_maze(self, complexity, f):
         return None
