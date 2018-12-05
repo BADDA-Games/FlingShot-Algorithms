@@ -779,4 +779,7 @@ class GridGraph:
         return None
 
     def generate_basic_maze(self, complexity, f):
-        return None
+        if self.start_location_defined and self.end_location_defined:
+            return None
+        else:
+            return None

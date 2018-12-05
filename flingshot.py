@@ -58,17 +58,22 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
     exit_height = height//8 + exit_var + 1
 
     G.define_start_location((entrance, starting_height))
-    G.define_end_location((exit, exit_height))
 
-    G.build_path((entrance, starting_height), "R", 2)
+    # G.define_start_location((entrance+2, starting_height))
+
+    # G.define_end_location((exit, exit_height))
+
+    # print G.is_in_grid((width,height))
+
+    # G.build_path((entrance, starting_height), "R", 2)
     # print G.vertices
 
-    G.build_path((4,2), "D", 10)
+    # G.build_path((4,2), "D", 10)
     # print G.vertices
 
-    print G.adj[4][6]
-
-    print G.rev[4][6]
+    # print G.adj[4][6]
+    #
+    # print G.rev[4][6]
 
     # G.build_path((4,9), "L", 10)
     # G.build_path((6,1), "D", 8)
@@ -78,6 +83,8 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
     # G.build_path((7,7), "L", 7)
     # G.build_path((0,7), "U", 4)
     # G.build_path((0,3), "R", 4)
+
+    # print G.fastest_path()
 
     # G.determine_extra_paths(R)
     # print G.fastest_path()
