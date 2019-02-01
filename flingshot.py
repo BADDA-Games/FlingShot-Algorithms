@@ -58,10 +58,15 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
     exit_height = height//8 + exit_var + 1
 
     G.define_start_location((entrance, starting_height))
+
+    G.define_start_location((entrance+2, starting_height))
+
     G.define_end_location((exit, exit_height))
 
     G.build_path((entrance, starting_height), "R", 2)
+
     G.build_path((4,2), "D", 10)
+
     G.build_path((4,9), "L", 10)
     G.build_path((6,1), "D", 8)
 
@@ -70,12 +75,19 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
     G.build_path((7,7), "L", 7)
     G.build_path((0,7), "U", 4)
     G.build_path((0,3), "R", 4)
+    # print G.vertices
+    # print G.fastest_path()
 
     # G.determine_extra_paths(R)
-    print G.fastest_path()
+    # print G.fastest_path()
 
-    o = G.deep_copy()
-    return o
+    # print G.is_path
+    # print G.possible()
+    # print G.possible_from_location((5,3))
+    print G.can_get_stuck()
+
+    # o = G.deep_copy()
+    return G
 #--------------------------------------
 public_seed = 1145
 b = create_blocks(2, 5, 10, 4, 3, False, public_seed)

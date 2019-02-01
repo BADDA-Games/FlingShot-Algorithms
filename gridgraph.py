@@ -24,6 +24,7 @@ class GridGraph:
 
         self.adj = []
         self.rev = []
+        #TODO refactor to a single array of types (enums)
         self.is_path = []
         self.is_unused_path = []
         self.is_vertex = []
@@ -60,6 +61,7 @@ class GridGraph:
                 self.is_wall[i][j] = False
                 self.is_unused_wall[i][j] = False
 
+    """ PUBLIC """
     def deep_copy(self):
         """
         Creates a deep copy of the current GridGraph data structure
@@ -79,32 +81,37 @@ class GridGraph:
         other.is_unused_wall = self.is_unused_wall
         return other
 
+    """ PUBLIC """
     def define_start_location(self, p):
         """
         Sets the start location parameter of the GridGraph, or does nothing
         if it was already set. This method should be called soon after creation.
         """
-        if not self.start_location_defined:
-            self.start_location_defined = True
-            self.start_location = p
-            self.add_edge(p, p)
-            for i in range(p[1], self.height):
-                self.is_path[p[0]][i] = True
-            if not p[1] == 0:
-                self.is_wall[p[0]][p[1]-1] = True
+        if self.is_in_grid(p):
+            if not self.start_location_defined:
+                self.start_location_defined = True
+                self.start_location = p
+                self.add_edge(p, p)
+                for i in range(p[1], self.height):
+                    self.is_path[p[0]][i] = True
+                self.mark_walls_p(p)
 
+    """ PUBLIC """
     def define_end_location(self, p):
         """
         Sets the end location parameter of the GridGraph, or does nothing
         if it was already set. This method should be called soon after creation.
         """
-        if not self.end_location_defined:
-            self.end_location_defined = True
-            self.end_location = p
-            self.add_edge(p, p)
-            for i in range(0, p[1]):
-                self.is_path[p[0]][i] = True
+        if self.is_in_grid(p):
+            if not self.end_location_defined:
+                self.end_location_defined = True
+                self.end_location = p
+                self.add_edge(p, p)
+                for i in range(0, p[1]):
+                    self.is_path[p[0]][i] = True
+                self.mark_walls_p(p)
 
+    """ PRIVATE """
     def add_edge(self, f, t):
         """
         Adds an edge between f and t to the grid, without updating any lists or
@@ -123,6 +130,7 @@ class GridGraph:
                     self.is_path[current][f[1]] = True
                     current = current + 1
 
+    """ UNCATEGORIZED """
     def in_deg(self,x,y):
         """
         Returns the in-degree of a point (x,y), the number of vertices that can
@@ -130,6 +138,7 @@ class GridGraph:
         """
         return len(self.rev[x][y])
 
+    """ UNCATEGORIZED """
     def in_deg_p(self,xy):
         """
         Returns the in-degree of a point xy, the number of vertices that can
@@ -137,6 +146,7 @@ class GridGraph:
         """
         return self.in_deg(xy[0],xy[1])
 
+    """ UNCATEGORIZED """
     def out_deg(self,x,y):
         """
         Returns the out-degree of a point (x,y), the number of vertices it can
@@ -144,6 +154,7 @@ class GridGraph:
         """
         return len(self.adj[x][y])
 
+    """ UNCATEGORIZED """
     def out_deg_p(self,xy):
         """
         Returns the out-degree of a point xy, the number of vertices it can
@@ -151,6 +162,7 @@ class GridGraph:
         """
         return self.out_deg(xy[0],xy[1])
 
+    """ PRIVATE """
     def is_in_grid(self, p):
         """
         Returns true if point p is in the grid space, false if it is not
@@ -159,6 +171,7 @@ class GridGraph:
         y = p[1]
         return 0 <= x < self.width and 0 <= y < self.height
 
+    """ PRIVATE """
     # TODO use update_path sides to update the grid without
     # doing a whole traversal
     def build(self, f, t):
@@ -170,6 +183,7 @@ class GridGraph:
         self.traverse() #inefficient, but works
         # self.update_path_sides(f, t)
 
+    """ UNCATEGORIZED """
     #TODO
     def update_path_sides(self, f, t):
         """
@@ -194,6 +208,7 @@ class GridGraph:
                 print (i, f[1]),
             print ""
 
+    """ PRIVATE """
     def path_orientation(self, f, t):
         """
         Given two points f and t, return P if they are the same point, V
@@ -205,6 +220,7 @@ class GridGraph:
         else: # Same y values
             return "H" if f[1] == t[1] else "N"
 
+    """ PRIVATE """
     def update_vertex_neighbors(self, p):
         """
         The complete process for setting relevant parameters for every vertex,
@@ -212,6 +228,7 @@ class GridGraph:
         """
         self.mark_walls_p(p)
 
+    """ PUBLIC """
     def build_path(self, f, direction, length):
         """
         Builds a path starting from a point f, in the direction specified,
@@ -242,6 +259,7 @@ class GridGraph:
                 else:
                     self.build(f, (f[0], f[1]+length))
 
+    """ PRIVATE """
     def traverse(self):
         """
         Traversal method for determining the structure of the graph, including
@@ -253,6 +271,7 @@ class GridGraph:
             self.bfs(self.start_location)
             self.mark_walls()
 
+    """ PRIVATE """
     def reset_lists(self):
         """
         Removes all elements from self.adj and self.rev and defaults them to
@@ -271,6 +290,7 @@ class GridGraph:
                 self.adj[i][j] = []
                 self.rev[i][j] = []
 
+    """ PRIVATE """
     def bfs(self, start):
         """
         Sets up a recursive call to compute the bfs of the graph starting from
@@ -278,6 +298,7 @@ class GridGraph:
         """
         self.bfs_recursive([start], [])
 
+    """ PRIVATE """
     def bfs_recursive(self, queue, visited):
         """
         Computes the breadth first search of the graph, taking the first element
@@ -315,6 +336,32 @@ class GridGraph:
         else: # Now we have visited every vertex
             self.vertices = visited
 
+    """ PUBLIC """
+    def possible(self):
+        """
+        Returns True if the current puzzle is possible to solve (exit reached)
+        if played perfectly, or False if it cannot.
+        """
+        return False if self.fastest_path() == None else True
+
+    """ UNCATEGORIZED """
+    def possible_from_location(self, p):
+        """
+        Given a location (must be a vertex) in the graph, return
+        True if the exit can be reached, or False otherwise
+        """
+        if not self.is_in_grid(p):
+            return False
+        return True if not self.fastest_path_from_location(p) == None else False
+
+    """ PUBLIC """
+    def can_get_stuck(self):
+        for v in self.vertices:
+            if not self.possible_from_location(v):
+                return True
+        return False
+
+    """ PUBLIC """
     def fastest_path(self):
         """
         Computes the length of the fastest path to get from the start
@@ -330,6 +377,23 @@ class GridGraph:
                 list.append(i)
         return self.shortest_paths(self.start_location, list )
 
+    """ PUBLIC """
+    def fastest_path_from_location(self, p):
+        """
+        Computes the length of the fastest path to get from vertex p
+        to any valid ending location, including those above
+        the specified end_location.
+        """
+        x = self.end_location[0]
+        y = self.end_location[1]
+        v = self.vertices_x(x)
+        list = []
+        for i in v:
+            if i[1] <= y:
+                list.append(i)
+        return self.shortest_paths(p, list)
+
+    """ PRIVATE """
     def shortest_path(self, start, end):
         """
         Returns the fewest number of moves required to get from start to end
@@ -358,6 +422,7 @@ class GridGraph:
         else:
             return None
 
+    """ PRIVATE """
     def shortest_paths(self, start, ends):
         """
         Returns the fewest number of moves required to get from start to
@@ -408,6 +473,7 @@ class GridGraph:
                 list.append(v)
         return list
 
+    """ PRIVATE """
     def add_to_lists(self, f, t):
         """
         Given a from point and a to point, adds them to the adjacency list
@@ -419,6 +485,7 @@ class GridGraph:
         rev = self.rev[t[0]][t[1]]
         util.add_if_missing(f, rev)
 
+    """ PRIVATE """
     def move(self, f, direction):
         """
         Starting at a point f, this algorithm will iteratively move in
@@ -461,6 +528,7 @@ class GridGraph:
         else:
             return None
 
+    """ PRIVATE """
     def mark_walls(self):
         """
         Sets up walls adjacent all vertices, ensuring that no paths outside our
@@ -470,6 +538,7 @@ class GridGraph:
         for p in self.vertices:
             self.mark_walls_p(p)
 
+    """ PRIVATE """
     def mark_walls_p(self, p):
         """
         Marks walls adjacent to point p (not including diagonals), as walls, if
@@ -490,6 +559,7 @@ class GridGraph:
         if self.is_in_grid(d) and not self.is_path[d[0]][d[1]]:
             self.is_wall[d[0]][d[1]] = True
 
+    """ PUBLIC """
     def determine_extra_paths(self, rand):
         """
         Pseudorandomly determines which pattern to build additional paths in
@@ -517,6 +587,7 @@ class GridGraph:
             self.keep_walls_column(ranges, rand)
             self.column_interval_assignment(ranges)
 
+    """ PRIVATE """
     def top_down_range(self):
         """
         Creates a non-shrinking list of ranges that encapsulate the walls and
@@ -534,6 +605,7 @@ class GridGraph:
             ranges.append((min,max))
         return ranges
 
+    """ PRIVATE """
     def down_up_range(self):
         """
         Creates a non-growing list of ranges that encapsulates the walls and
@@ -553,6 +625,7 @@ class GridGraph:
             ranges.insert(0, (min,max))
         return ranges
 
+    """ PRIVATE """
     def tight_range(self):
         """
         Creates a list of ranges at each height which enclose all walls and paths
@@ -569,6 +642,7 @@ class GridGraph:
             ranges.append((min,max))
         return ranges
 
+    """ PRIVATE """
     def left_right_range(self):
         """
         Creates a non-shrinking list of ranges by starting on the left, finding
@@ -586,6 +660,7 @@ class GridGraph:
             ranges.append((min, max))
         return ranges
 
+    """ PRIVATE """
     def right_left_range(self):
         """
         Creates a non-growing list of ranges by taking the smallest range
@@ -604,6 +679,7 @@ class GridGraph:
             ranges.insert(0, (min, max))
         return ranges
 
+    """ PRIVATE """
     def column_interval_assignment(self, ranges):
         """
         Given a list of self.width tuples, converts all non-determined
@@ -625,6 +701,7 @@ class GridGraph:
                     self.is_wall[i][j] = True
                     self.is_unused_wall[j][i] = True
 
+    """ PRIVATE """
     def row_interval_assignment(self, ranges):
         """
         Given a list of self.height tuples, converts all non-determined
@@ -646,6 +723,7 @@ class GridGraph:
                     self.is_wall[j][i] = True
                     self.is_unused_wall[j][i] = True
 
+    """ PRIVATE """
     def keep_walls_row(self, ranges, rand):
         for i in range(self.height):
             for j in range(ranges[i][0], ranges[i][1]+1):
@@ -653,6 +731,7 @@ class GridGraph:
                     if rand.generate(0, 1) == 1:
                         self.is_wall[j][i] = True
 
+    """ PRIVATE """
     def keep_walls_column(self, ranges, rand):
         for i in range(self.width):
             for j in range(ranges[i][0], ranges[i][1]+1):
@@ -660,7 +739,11 @@ class GridGraph:
                     if rand.generate(0,1) == 1:
                         self.is_wall[i][j] = True
 
+    """ PUBLIC """
     def longest_noninterfering_path(self, f, direction):
+        #TODO when you start from a vertex, there will be walls. Make sure
+        #this method knows to look out for them, but still consider if those
+        # are also walls for another vertex.
         """
         Determines the length of the longest path from, ideally
         another vertex in place, in a direction, without consideration
@@ -760,6 +843,25 @@ class GridGraph:
         else:
             return None
 
+
+    """ PUBLIC """
     #TODO
     def longest_nonintrusive_path(self, f, direction):
+        """
+        Determines the length of the longest path, starting at a point f,
+        as long adding the path does not eliminate edges. Note that this is
+        different from longest_noninterfering_path, as it does not allow
+        for ANY changes in vertices. In this one the vertex may change, but if
+        it does then all the edges and paths must still be present. No degrees
+        should be lessened. Adding the edge must keep the maze in a solvable state, if
+        it is already.
+        """
         return None
+
+    """ PUBLIC """
+    #TODO
+    def generate_basic_maze(self, complexity, f):
+        if self.start_location_defined and self.end_location_defined:
+            return None
+        else:
+            return None
