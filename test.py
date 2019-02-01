@@ -9,10 +9,6 @@ def print_t(name, res):
     print success if res else failure,
     print name
 
-def assert_equal(v1, v2):
-    return v1 == v2
-
-
 class TestRandom:
 
     def __init__(self):
@@ -102,9 +98,6 @@ class TestGridGraph:
         assert G.is_path[6][0] == True
         assert G.is_wall[6][2] == True
         return True
-
-
-
 
 TestRandom()
 TestGridGraph()
