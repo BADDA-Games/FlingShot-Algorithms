@@ -81,7 +81,7 @@ class GridGraph:
         other.is_unused_wall = self.is_unused_wall
         return other
 
-    """ PUBLIC """
+    """ PRIVATE """
     def define_start_location(self, p):
         """
         Sets the start location parameter of the GridGraph, or does nothing
@@ -96,7 +96,7 @@ class GridGraph:
                     self.is_path[p[0]][i] = True
                 self.mark_walls_p(p)
 
-    """ PUBLIC """
+    """ PRIVATE """
     def define_end_location(self, p):
         """
         Sets the end location parameter of the GridGraph, or does nothing
@@ -110,6 +110,22 @@ class GridGraph:
                 for i in range(0, p[1]):
                     self.is_path[p[0]][i] = True
                 self.mark_walls_p(p)
+
+    """ PUBLIC """
+    def define_initial_locations(self, s, e):
+        """
+        Takes a starting position s, and an ending position e, initializes
+        the grid with those positions iff the puzzle does not become trivial
+        while doing so. Returns True if successful or False if unsuccessful.
+        """
+        if s[0] == e[0] and s[1] - 1 <= e[1]:
+            #In this case the x positions of start and end are the same,
+            #and the y positions are such that it will be a straight line up
+            #to the exit, requiring no movments and trivializing the puzzle
+            return False
+        self.define_start_location(s)
+        self.define_end_location(e)
+        return True
 
     """ PRIVATE """
     def add_edge(self, f, t):
@@ -355,7 +371,24 @@ class GridGraph:
         return True if not self.fastest_path_from_location(p) == None else False
 
     """ PUBLIC """
+    def trap_vertices(self):
+        """
+        Returns a list of vertices where the player cannot reach
+        the exit from; any of these positions is unwinnable
+        """
+        traps = []
+        for v in self.vertices:
+            if not self.possible_from_location(v):
+                traps.append(v)
+        return traps
+
+    """ PUBLIC """
     def can_get_stuck(self):
+        """
+        Returns True if trap vertices exist, that is
+        the player can get into a position where reaching
+        the exit becomes impossible, False otherwise
+        """
         for v in self.vertices:
             if not self.possible_from_location(v):
                 return True
@@ -451,6 +484,7 @@ class GridGraph:
         else:
             return None
 
+    """ UNCATEGORIZED """
     def vertices_x(self, x):
         """
         Returns all points in the vertices list which
@@ -462,6 +496,7 @@ class GridGraph:
                 list.append(v)
         return list
 
+    """ UNCATEGORIZED """
     def vertices_y(self, y):
         """
         Returns all points in the vertices list which
@@ -558,6 +593,15 @@ class GridGraph:
             self.is_wall[u[0]][u[1]] = True
         if self.is_in_grid(d) and not self.is_path[d[0]][d[1]]:
             self.is_wall[d[0]][d[1]] = True
+
+    """ UNCATEGORIZED """
+    def essential_vertices(self):
+        """
+        Returns a list of vertices which, regardless of the move input,
+        in order to successfully complete the puzzle all of those vertices
+        must be visited. Note that in all expected cases the starting vertex
+        should be included in this list, so it should never be non-empty.
+        """
 
     """ PUBLIC """
     def determine_extra_paths(self, rand):
@@ -842,7 +886,6 @@ class GridGraph:
                         return length
         else:
             return None
-
 
     """ PUBLIC """
     #TODO

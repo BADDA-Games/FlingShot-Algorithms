@@ -82,9 +82,8 @@ def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
     # print G.fastest_path()
 
     # print G.is_path
-    # print G.possible()
-    # print G.possible_from_location((5,3))
     print G.can_get_stuck()
+    print G.trap_vertices()
 
     # o = G.deep_copy()
     return G
