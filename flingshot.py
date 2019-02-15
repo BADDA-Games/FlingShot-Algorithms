@@ -3,10 +3,12 @@ import printer as p
 import random as rand
 import util
 
-def create_blocks(entrance, exit, height, difficulty, complexity, key, seed):
+def create(seed):
+    return create_blocks(4, 3, 4, 3, seed)
+
+def create_blocks(entrance, exit, difficulty, complexity, seed):
     # TODO move the majority of this function somewhere else; the algorithm should be its own method
-    if height < 4:
-        height = 4
+    height = 16
     width = 9
 
     entrance = util.floor(entrance)
@@ -28,7 +30,7 @@ def create_blocks(entrance, exit, height, difficulty, complexity, key, seed):
     top[exit] = "O"
     bottom[entrance] = "O"
 
-    G = blocks(entrance, exit, height, width, difficulty, complexity, key, seed)
+    G = blocks(entrance, exit, height, width, difficulty, complexity, seed)
 
     for i in range(height):
         for j in range(width):
@@ -48,50 +50,83 @@ def create_blocks(entrance, exit, height, difficulty, complexity, key, seed):
     return grid
 
 #Reminder that our coordinate system is (x,y), starting from top left
-def blocks(entrance, exit, height, width, difficulty, complexity, key, seed):
+def blocks(entrance, exit, height, width, difficulty, complexity, seed):
     G = gg.GridGraph(width, height)
     R = rand.RandomSeed(seed)
 
-    start_var = R.generate(0,2)
-    starting_height = height - height//4 - start_var
-    exit_var = R.generate(0,3)
-    exit_height = height//8 + exit_var + 1
+    start_height = 14
+    exit_height = 8
 
-    G.define_start_location((entrance, starting_height))
-
-    G.define_start_location((entrance+2, starting_height))
-
+    G.define_start_location((entrance, start_height))
     G.define_end_location((exit, exit_height))
 
-    G.build_path((entrance, starting_height), "R", 2)
+    v = [(entrance, start_height)]
 
-    G.build_path((4,2), "D", 10)
+    v.append(G.build_path((entrance, start_height), "R", 4))
+    v.append(G.build_path(v[-1], "D", 1))
+    v.append(G.build_path(v[-1], "L", 2))
+    v.append(G.build_path(v[-3], "U", 1))
+    v.append(G.build_path(v[-1], "L", 1))
+    v.append(G.build_path(v[-1], "U", 2))
+    v.append(G.build_path(v[-1], "R", 1))
+    v.append(G.build_path(v[-1], "U", 7))
+    v.append(G.build_path(v[-1], "L", 1))
+    v.append(G.build_path(v[-1], "U", 4))
+    v.append(G.build_path(v[-1], "L", 1))
+    v.append(G.build_path(v[-1], "D", 1))
+    v.append(G.build_path(v[-1], "R", 2))
+    v.append(G.build_path(v[-1], "U", 1))
+    v.append(G.build_path(v[-6], "D", 3))
+    v.append(G.build_path(v[-1], "L", 1))
+    v.append(G.build_path(v[-1], "D", 1))
+    v.append(G.build_path(v[-1], "L", 6))
+    v.append(G.build_path(v[-1], "D", 1))
+    v.append(G.build_path(v[-1], "R", 1))
+    v.append(G.build_path(v[-1], "D", 5))
+    v.append(G.build_path(v[-1], "R", 1))
+    v.append(G.build_path(v[-1], "U", 1))
+    v.append(G.build_path(v[-1], "L", 2))
+    v.append(G.build_path(v[-3], "D", 1))
+    v.append(G.build_path(v[-1], "R", 2))
+    v.append(G.build_path(v[-9], "U", 2))
+    v.append(G.build_path(v[-1], "R", 1))
+    v.append(G.build_path(v[-1], "D", 8))
+    v.append(G.build_path(v[-2], "U", 3))
+    v.append(G.build_path(v[-1], "L", 1))
+    v.append(G.build_path(v[-1], "D", 1))
+    v.append(G.build_path(v[-2], "U", 3))
+    v.append(G.build_path(v[-1], "R", 4))
+    v.append(G.build_path(v[-1], "D", 4))
+    v.append(G.build_path(v[-1], "R", 1))
+    v.append(G.build_path(v[-1], "U", 1))
+    v.append(G.build_path(v[-1], "R", 2))
+    v.append(G.build_path(v[-2], "L", 5))
+    v.append(G.build_path(v[-4], "D", 2))
+    v.append(G.build_path(v[-1], "R", 3))
+    v.append(G.build_path(v[-36], "L", 3))
+    v.append(G.build_path(v[-1], "D", 1))
+    v.append(G.build_path(v[-1], "R", 3))
+    v.append(G.build_path(v[-3], "U", 4))
+    v.append(G.build_path(v[-1], "L", 4))
+    v.append(G.build_path(v[-31], "U", 2))
 
-    G.build_path((4,9), "L", 10)
-    G.build_path((6,1), "D", 8)
-
-    G.build_path((6,9), "R", 1)
-    G.build_path((7,9), "U", 2)
-    G.build_path((7,7), "L", 7)
-    G.build_path((0,7), "U", 4)
-    G.build_path((0,3), "R", 4)
-    # print G.vertices
-    # print G.fastest_path()
+    print G.distance
 
     # G.determine_extra_paths(R)
-    # print G.fastest_path()
 
-    # print G.is_path
-    print G.can_get_stuck()
-    print G.trap_vertices()
-
-    # o = G.deep_copy()
+    # p.print_gg(G)
     return G
 #--------------------------------------
-public_seed = 1145
-b = create_blocks(2, 5, 10, 4, 3, False, public_seed)
+public_seed = 1146
+b = create(public_seed)
 # p.print_b(b)
 p.print_player_view(b)
+# R = rand.RandomSeed(public_seed)
+# R.generate(0,100)
+# print R.seed
+# R.generate(0,100)
+# print R.seed
+
 
 #--------------------------------------
 # THINGS TO IMPLEMENT
