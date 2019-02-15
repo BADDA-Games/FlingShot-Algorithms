@@ -30,3 +30,15 @@ def sort_tuples_y(list):
 
 def floor(n):
     return int(n//1)
+
+def lookup(k, ls):
+    """
+    Python implementation of the Haskell lookup funcion.
+    ls is a list of (key, value) tuples. Given a key k,
+    this will return the associated value. If multiple entries exist,
+    lookup will return the first one in the list
+    """
+    for i in ls:
+        if i[0] == k:
+            return i[1]
+    return None
