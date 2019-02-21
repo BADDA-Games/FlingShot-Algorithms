@@ -335,7 +335,6 @@ class GridGraph:
         if len(queue) > 0:
             curr = queue[0]
             dist = util.lookup(curr, self.distance)
-            print dist
             l = self.move(curr, "L")
             r = self.move(curr, "R")
             u = self.move(curr, "U")
