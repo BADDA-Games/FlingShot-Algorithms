@@ -410,8 +410,11 @@ class GridGraph:
         to any valid ending location, including those above
         the specified end_location.
         """
-        x = self.end_location[0]
-        y = self.end_location[1]
+        x = self.width // 2
+        y = 0
+        for i in range(self.height):
+            if not self.is_path[x][i] and y > 1:
+                y = i - 1
         v = self.vertices_x(x)
         list = []
         for i in v:
