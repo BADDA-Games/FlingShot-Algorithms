@@ -18,11 +18,7 @@ class GridGraph:
         self.vertices = []
         self.distance = []
 
-        self.start_location = None
-        self.start_location_defined = False
-
-        self.end_location = None
-        self.end_location_defined = False
+        self.start = (width // 2, height-1)
 
         self.adj = []
         self.rev = []
@@ -68,6 +64,11 @@ class GridGraph:
                 self.is_wall[i][j] = False
                 self.is_unused_wall[i][j] = False
 
+        # self.is_path[width//2][height-1] = True
+        # self.mark_walls_p(self.start)
+        self.build(self.start, self.start)
+        self.build((self.width // 2, 0),(self.width // 2, 0))
+
     """ PUBLIC """
     def deep_copy(self):
         """
@@ -75,10 +76,6 @@ class GridGraph:
         """
         other = GridGraph(self.width, self.height)
         other.vertices = self.vertices
-        other.start_location = self.start_location
-        other.start_location_defined = self.start_location_defined
-        other.end_location = self.end_location
-        other.end_location_defined = self.end_location_defined
         other.adj = self.adj
         other.rev = self.rev
         other.expandable_directions = self.expandable_directions
@@ -91,10 +88,6 @@ class GridGraph:
 
     def copy(self, other):
         self.vertices = other.vertices
-        self.start_location = other.start_location
-        self.start_location_defined = other.start_location_defined
-        self.end_location = other.end_location
-        self.end_location_defined = other.end_location_defined
         self.adj = other.adj
         self.rev = other.rev
         self.expandable_directions = other.expandable_directions
@@ -103,52 +96,6 @@ class GridGraph:
         self.is_vertex = other.is_vertex
         self.is_wall = other.is_wall
         self.is_unused_wall = other.is_unused_wall
-
-    """ PRIVATE """
-    def define_start_location(self, p):
-        """
-        Sets the start location parameter of the GridGraph, or does nothing
-        if it was already set. This method should be called soon after creation.
-        """
-        if self.is_in_grid(p):
-            if not self.start_location_defined:
-                self.start_location_defined = True
-                self.start_location = p
-                self.add_edge(p, p)
-                for i in range(p[1], self.height):
-                    self.is_path[p[0]][i] = True
-                self.mark_walls_p(p)
-
-    """ PRIVATE """
-    def define_end_location(self, p):
-        """
-        Sets the end location parameter of the GridGraph, or does nothing
-        if it was already set. This method should be called soon after creation.
-        """
-        if self.is_in_grid(p):
-            if not self.end_location_defined:
-                self.end_location_defined = True
-                self.end_location = p
-                self.add_edge(p, p)
-                for i in range(0, p[1]):
-                    self.is_path[p[0]][i] = True
-                self.mark_walls_p(p)
-
-    """ PUBLIC """
-    def define_initial_locations(self, s, e):
-        """
-        Takes a starting position s, and an ending position e, initializes
-        the grid with those positions iff the puzzle does not become trivial
-        while doing so. Returns True if successful or False if unsuccessful.
-        """
-        if s[0] == e[0] and s[1] - 1 <= e[1]:
-            #In this case the x positions of start and end are the same,
-            #and the y positions are such that it will be a straight line up
-            #to the exit, requiring no movments and trivializing the puzzle
-            return False
-        self.define_start_location(s)
-        self.define_end_location(e)
-        return True
 
     """ PRIVATE """
     def add_edge(self, f, t):
@@ -310,10 +257,9 @@ class GridGraph:
         vertices, edges, walls, and their positions. May be called frequently
         to ensure that the graph is built correctly
         """
-        if not self.start_location == None:
-            self.reset_lists()
-            self.bfs(self.start_location)
-            self.mark_walls()
+        self.reset_lists()
+        self.bfs((self.width//2, self.height-1))
+        self.mark_walls()
 
     """ PRIVATE """
     def reset_lists(self):
@@ -338,7 +284,7 @@ class GridGraph:
     def bfs(self, start):
         """
         Sets up a recursive call to compute the bfs of the graph starting from
-        the start point, usually self.start_location
+        the start point, usually the start, (self.width//2, self.height-1)
         """
         self.distance = [(start, 0)]
         self.bfs_recursive([start], [start], [])
@@ -438,22 +384,27 @@ class GridGraph:
 
     """ PUBLIC """
     def fastest_path(self):
+        #TODO update for fixed end
         """
         Computes the length of the fastest path to get from the start
         location to any valid ending location, including those above
         the specified end_location.
         """
-        x = self.end_location[0]
-        y = self.end_location[1]
+        x = self.width // 2
+        y = 0
+        for i in range(self.height):
+            if not self.is_path[x][i] and y > 1:
+                y = i - 1
         v = self.vertices_x(x)
         list = []
         for i in v:
             if i[1] <= y:
                 list.append(i)
-        return self.shortest_paths(self.start_location, list )
+        return self.shortest_paths(self.start, list )
 
     """ PUBLIC """
     def fastest_path_from_location(self, p):
+        #TODO update for fixed end
         """
         Computes the length of the fastest path to get from vertex p
         to any valid ending location, including those above
@@ -590,7 +541,7 @@ class GridGraph:
                 y = f[1]
                 while y - 1 >= 0 and self.is_path[x][y - 1]:
                     y = y - 1
-                if x == self.end_location[0] and y == 0:
+                if x == self.width // 2 and y == 0:
                     return None # Going up here will advance to next grid
                 return (x,y)
             elif direction == "D":
@@ -598,8 +549,6 @@ class GridGraph:
                 y = f[1]
                 while y + 1 < self.height and self.is_path[x][y + 1]:
                     y = y + 1
-                if x == self.start_location[0] and y == self.height - 1:
-                    return None # Going down here will go to the previous grid
                 return (x,y)
             return None #bad direction
         else:
@@ -946,10 +895,7 @@ class GridGraph:
     """ PUBLIC """
     #TODO
     def generate_basic_maze(self, complexity, f):
-        if self.start_location_defined and self.end_location_defined:
-            return None
-        else:
-            return None
+        return None
 
     """ PUBLIC """
     def complexity(self):

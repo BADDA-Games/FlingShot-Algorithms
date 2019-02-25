@@ -3,17 +3,15 @@ import printer as p
 import random as rand
 import util
 
-def create(seed):
-    return create_blocks(4, 3, 4, 3, seed)
+def create(seed, level):
+    return create_blocks(4, 3, seed)
 
-def create_blocks(entrance, exit, difficulty, complexity, seed):
-    # TODO move the majority of this function somewhere else; the algorithm should be its own method
+def create_blocks(difficulty, complexity, seed):
+
+    # Map constants
     height = 16
     width = 9
 
-    entrance = util.floor(entrance)
-    exit = util.floor(exit)
-    height = util.floor(height)
     difficulty = util.floor(difficulty)
     complexity = util.floor(complexity)
 
@@ -27,10 +25,9 @@ def create_blocks(entrance, exit, difficulty, complexity, seed):
 
     top = ["X"] * width
     bottom = ["X"] * width
-    top[exit] = "O"
-    bottom[entrance] = "O"
+    top[width//2] = "O"
 
-    G = blocks(entrance, exit, height, width, difficulty, complexity, seed)
+    G = blocks(height, width, difficulty, complexity, seed)
 
     for i in range(height):
         for j in range(width):
@@ -50,17 +47,18 @@ def create_blocks(entrance, exit, difficulty, complexity, seed):
     return grid
 
 #Reminder that our coordinate system is (x,y), starting from top left
-def blocks(entrance, exit, height, width, difficulty, complexity, seed):
+def blocks(height, width, difficulty, complexity, seed):
     G = gg.GridGraph(width, height)
     R = rand.RandomSeed(seed)
 
     start_height = 14
     exit_height = 8
+    exit = width // 2
 
-    G.define_start_location((entrance, start_height))
-    G.define_end_location((exit, exit_height))
+    # G.define_start_location((4, start_height))
+    # G.define_end_location((exit, exit_height))
 
-    v = [(entrance, start_height)]
+    v = [(width // 2, height-1)]
 
     u = "U"
     d = "D"
@@ -71,64 +69,70 @@ def blocks(entrance, exit, height, width, difficulty, complexity, seed):
         index = offset*-1
         v.append(G.build_path(v[index], direction, length))
 
-    v.append(G.build_path((entrance, start_height), "R", 4))
-    add(1, d, 1)
-    add(1, l, 2)
-    add(3, u, 1)
-    add(1, l, 1)
-    add(1, u, 2)
-    add(1, r, 1)
-    add(1, u, 7)
-    add(1, l, 1)
-    add(1, u, 4)
-    add(1, l, 1)
-    add(1, d, 1)
-    add(1, r, 2)
-    add(1, u, 1)
-    add(6, d, 3)
-    add(1, l, 1)
-    add(1, d, 1)
-    add(1, l, 6)
-    add(1, d, 1)
-    add(1, r, 1)
-    add(1, d, 5)
-    add(1, r, 1)
-    add(1, u, 1)
-    add(1, l, 2)
-    add(3, d, 1)
-    add(1, r, 2)
-    add(9, u, 2)
-    add(1, r, 1)
-    add(1, d, 8)
-    add(2, u, 3)
-    add(1, l, 1)
-    add(1, d, 1)
-    add(2, u, 3)
-    add(1, r, 4)
-    add(1, d, 4)
-    add(1, r, 1)
-    add(1, u, 1)
-    add(1, r, 2)
-    add(2, l, 5)
-    add(4, d, 2)
-    add(1, r, 3)
-    add(36, l, 3)
-    add(1, d, 1)
-    add(1, r, 3)
-    add(3, u, 4)
-    add(1, l, 4)
-    add(31, u, 2)
+    # v.append(G.build_path((4, start_height), "R", 4))
+    #TODO if a vertex is missing, it is offset somehow by a path which destroyed
+    #it. It needs to be accounted before, or ensure it can never happen
+    # add(1, r, 4)
+    # add(1, u, 1)
+    # add(1, l, 2)
+    # add(3, u, 1)
+    # add(1, l, 1)
+    # add(1, u, 2)
+    # add(1, r, 1)
+    # add(1, u, 7)
+    # add(1, l, 1)
+    # add(1, u, 4)
+    # add(1, l, 1)
+    # add(1, d, 1)
+    # add(1, r, 2)
+    # add(1, u, 1)
+    # add(6, d, 3)
+    # add(1, l, 1)
+    # add(1, d, 1)
+    # add(1, l, 6)
+    # add(1, d, 1)
+    # add(1, r, 1)
+    # add(1, d, 5)
+    # add(1, r, 1)
+    # add(1, u, 1)
+    # add(1, l, 2)
+    # add(3, d, 1)
+    # add(1, r, 2)
+    # add(9, u, 2)
+    # add(1, r, 1)
+    # add(1, d, 8)
+    # add(2, u, 3)
+    # add(1, l, 1)
+    # add(1, d, 1)
+    # add(2, u, 3)
+    # add(1, r, 4)
+    # add(1, d, 4)
+    # add(1, r, 1)
+    # add(1, u, 1)
+    # add(1, r, 2)
+    # add(2, l, 5)
+    # add(4, d, 2)
+    # add(1, r, 3)
+    # add(36, l, 3)
+    # add(1, d, 1)
+    # add(1, r, 3)
+    # add(3, u, 4)
+    # add(1, l, 4)
+    # add(31, u, 2)
 
     G.iterate(complexity, difficulty)
 
-    # print G.distance
+    print G.distance
+    print G.possible()
 
     # G.determine_extra_paths(R)
 
     return G
 #--------------------------------------
 public_seed = 1146
-b = create(public_seed)
+level = 1
+b = create(public_seed, level)
+
 p.print_player_view(b)
 
 
