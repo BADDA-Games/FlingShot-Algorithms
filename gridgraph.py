@@ -267,18 +267,29 @@ class GridGraph:
         Removes all elements from self.adj and self.rev and defaults them to
         empty twice-indicied lists.
         """
+        #TODO expandable_directions?
         self.adj = []
         self.rev = []
+        self.vertices = []
+        self.distance = []
         for i in range(self.width):
             self.adj.append(i)
             self.rev.append(i)
+            self.vertices.append(i)
+            self.distance.append(i)
             self.adj[i] = []
             self.rev[i] = []
+            self.vertices[i] = []
+            self.distance[i] = []
             for j in range(self.height):
                 self.adj[i].append(j)
                 self.rev[i].append(j)
+                self.vertices[i].append(j)
+                self.distance[i].append(j)
                 self.adj[i][j] = []
                 self.rev[i][j] = []
+                self.vertices[i][j] = []
+                self.distance[i][j] = []
 
     """ PRIVATE """
     def bfs(self, start):
@@ -393,8 +404,9 @@ class GridGraph:
         x = self.width // 2
         y = 0
         for i in range(self.height):
-            if not self.is_path[x][i] and y > 1:
+            if not self.is_path[x][i]:
                 y = i - 1
+                break
         v = self.vertices_x(x)
         list = []
         for i in v:

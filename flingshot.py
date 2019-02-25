@@ -71,28 +71,28 @@ def blocks(height, width, difficulty, complexity, seed):
 
     #TODO if a vertex is missing, it is offset somehow by a path which destroyed
     #it. It needs to be accounted before, or ensure it can never happen
-    # add(1, r, 4)
-    # add(1, u, 3)
-    # add(1, l, 2)
-    # add(1, u, 6)
-    # add(1, l, 4)
-    # add(1, d, 1)
-    # add(1, r, 2)
-    # add(1, u, 3)
-    # add(1, r, 2)
-    # add(1, u, 1)
-    # add(1, r, 1)
-    # add(1, u, 2)
-    # add(1, l, 3)
-    # add(14, u, 5)
-    # add(1, l, 4)
-    # add(1, u, 8)
-    # add(1, r, 5)
+    add(1, r, 4)
+    add(1, u, 3)
+    add(1, l, 2)
+    add(1, u, 6)
+    add(1, l, 4)
+    add(1, d, 1)
+    add(1, r, 2)
+    add(1, u, 3)
+    add(1, r, 2)
+    add(1, u, 1)
+    add(1, r, 1)
+    add(1, u, 2)
+    add(1, l, 3)
+    add(14, u, 5)
+    add(1, l, 4)
+    add(1, u, 8)
+    add(1, r, 5)
 
     G.iterate(complexity, difficulty)
 
-    print G.distance
-    print G.possible()
+    # print G.distance
+    print G.fastest_path()
 
     # G.determine_extra_paths(R)
 
