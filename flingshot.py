@@ -62,14 +62,14 @@ def blocks(entrance, exit, height, width, difficulty, complexity, seed):
 
     v = [(entrance, start_height)]
 
-    def add(offset, direction, length):
-        index = offset*-1
-        v.append(G.build_path(v[index], direction, length))
-
     u = "U"
     d = "D"
     l = "L"
     r = "R"
+
+    def add(offset, direction, length):
+        index = offset*-1
+        v.append(G.build_path(v[index], direction, length))
 
     v.append(G.build_path((entrance, start_height), "R", 4))
     add(1, d, 1)
@@ -119,23 +119,17 @@ def blocks(entrance, exit, height, width, difficulty, complexity, seed):
     add(1, l, 4)
     add(31, u, 2)
 
+    G.iterate(complexity, difficulty)
+
     # print G.distance
-    print G.complexity()
 
     # G.determine_extra_paths(R)
 
-    # p.print_gg(G)
     return G
 #--------------------------------------
 public_seed = 1146
 b = create(public_seed)
-# p.print_b(b)
 p.print_player_view(b)
-# R = rand.RandomSeed(public_seed)
-# R.generate(0,100)
-# print R.seed
-# R.generate(0,100)
-# print R.seed
 
 
 #--------------------------------------

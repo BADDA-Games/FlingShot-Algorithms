@@ -26,6 +26,7 @@ class GridGraph:
 
         self.adj = []
         self.rev = []
+        self.expandable_directions = []
         #TODO refactor to a single array of types (enums)
         self.is_path = []
         self.is_unused_path = []
@@ -35,6 +36,7 @@ class GridGraph:
         for i in range(width):
             self.adj.append(i)
             self.rev.append(i)
+            self.expandable_directions.append(i)
             self.is_path.append(i)
             self.is_unused_path.append(i)
             self.is_vertex.append(i)
@@ -42,6 +44,7 @@ class GridGraph:
             self.is_unused_wall.append(i)
             self.adj[i] = []
             self.rev[i] = []
+            self.expandable_directions[i] = []
             self.is_path[i] = []
             self.is_unused_path[i] = []
             self.is_vertex[i] = []
@@ -50,6 +53,7 @@ class GridGraph:
             for j in range(height):
                 self.adj[i].append(j)
                 self.rev[i].append(j)
+                self.expandable_directions[i].append(j)
                 self.is_path[i].append(j)
                 self.is_unused_path[i].append(j)
                 self.is_vertex[i].append(j)
@@ -57,6 +61,7 @@ class GridGraph:
                 self.is_unused_wall[i].append(j)
                 self.adj[i][j] = []
                 self.rev[i][j] = []
+                self.expandable_directions[i][j] = None
                 self.is_path[i][j] = False
                 self.is_unused_path[i][j] = False
                 self.is_vertex[i][j] = False
@@ -76,12 +81,28 @@ class GridGraph:
         other.end_location_defined = self.end_location_defined
         other.adj = self.adj
         other.rev = self.rev
+        other.expandable_directions = self.expandable_directions
         other.is_path = self.is_path
         other.is_unused_path = self.is_unused_path
         other.is_vertex = self.is_vertex
         other.is_wall = self.is_wall
         other.is_unused_wall = self.is_unused_wall
         return other
+
+    def copy(self, other):
+        self.vertices = other.vertices
+        self.start_location = other.start_location
+        self.start_location_defined = other.start_location_defined
+        self.end_location = other.end_location
+        self.end_location_defined = other.end_location_defined
+        self.adj = other.adj
+        self.rev = other.rev
+        self.expandable_directions = other.expandable_directions
+        self.is_path = other.is_path
+        self.is_unused_path = other.is_unused_path
+        self.is_vertex = other.is_vertex
+        self.is_wall = other.is_wall
+        self.is_unused_wall = other.is_unused_wall
 
     """ PRIVATE """
     def define_start_location(self, p):
@@ -948,3 +969,29 @@ class GridGraph:
                     n = n + len(self.adj[i][j]) - 1
         L = m*math.log(n**2/m) / math.log(n)
         return L
+
+    def difficulty(self):
+        """
+
+        """
+        return None
+
+    """ PUBLIC """
+    def buildable_directions(self, p):
+        """
+        Returns a list of directions of which can be expanded in without
+        removing the vertex p and without screwing up something
+        """
+        #TODO figure out exactly what this method needs, or if this is more
+        #of a class variable (similar to adj), which every vertex could hold
+        #a list or string containing the "good" directions
+        return None
+
+    def iterate(self, difficulty, complexity):
+        loop_condition = False
+        while loop_condition:
+            other = self.deep_copy()
+            # Do some algorithm process
+            some_other_condition = False
+            if some_other_condition:
+                self.copy(other)
