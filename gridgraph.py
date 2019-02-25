@@ -1,4 +1,5 @@
 import util
+import math
 
 class GridGraph:
     # A class to show how positions on the grid
@@ -932,6 +933,18 @@ class GridGraph:
     """ PUBLIC """
     def complexity(self):
         """
-
+        The complexity of the adjacency list, based on the definition derived
+        in graph-complexity.pdf
+        m - number of vertices
+        n - number of edges, excluding the edge from a vertex to itself
+            from the design of our adj list that edge will always be there,
+            if it exists. Thus it's important to remove it.
         """
-        return 0
+        m = n = 0
+        for i in range(self.width):
+            for j in range(self.height):
+                if self.adj[i][j] != []:
+                    m = m + 1
+                    n = n + len(self.adj[i][j]) - 1
+        L = m*math.log(n**2/m) / math.log(n)
+        return L

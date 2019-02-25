@@ -119,7 +119,8 @@ def blocks(entrance, exit, height, width, difficulty, complexity, seed):
     add(1, l, 4)
     add(31, u, 2)
 
-    print G.distance
+    # print G.distance
+    print G.complexity()
 
     # G.determine_extra_paths(R)
 
