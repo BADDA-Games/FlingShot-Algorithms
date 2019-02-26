@@ -92,13 +92,14 @@ def blocks(height, width, difficulty, complexity, seed):
     G.iterate(complexity, difficulty)
 
     # print G.distance
-    print G.fastest_path()
+    print G.can_get_stuck()
+    print G.trap_vertices()
 
     # G.determine_extra_paths(R)
 
     return G
 #--------------------------------------
-public_seed = 1146
+public_seed = 1149
 level = 1
 b = create(public_seed, level)
 

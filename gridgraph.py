@@ -425,8 +425,9 @@ class GridGraph:
         x = self.width // 2
         y = 0
         for i in range(self.height):
-            if not self.is_path[x][i] and y > 1:
+            if not self.is_path[x][i]:
                 y = i - 1
+                break
         v = self.vertices_x(x)
         list = []
         for i in v:
