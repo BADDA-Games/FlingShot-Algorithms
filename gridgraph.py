@@ -395,7 +395,6 @@ class GridGraph:
 
     """ PUBLIC """
     def fastest_path(self):
-        #TODO update for fixed end
         """
         Computes the length of the fastest path to get from the start
         location to any valid ending location, including those above
@@ -412,11 +411,10 @@ class GridGraph:
         for i in v:
             if i[1] <= y:
                 list.append(i)
-        return self.shortest_paths(self.start, list )
+        return self.shortest_paths(self.start, list)
 
     """ PUBLIC """
     def fastest_path_from_location(self, p):
-        #TODO update for fixed end
         """
         Computes the length of the fastest path to get from vertex p
         to any valid ending location, including those above
@@ -538,32 +536,83 @@ class GridGraph:
         (may potentially) also be the same as f.
         """
         if self.is_in_grid(f):
+            x = f[0]
+            y = f[1]
             if not self.is_path[f[0]][f[1]]:
                 return None
             elif direction == "R":
-                x = f[0]
-                y = f[1]
                 while x + 1 < self.width and self.is_path[x + 1][y]:
                     x = x + 1
                 return (x,y)
             elif direction == "L":
-                x = f[0]
-                y = f[1]
                 while x - 1 >= 0 and self.is_path[x - 1][y]:
                     x = x - 1
                 return (x,y)
             elif direction == "U":
-                x = f[0]
-                y = f[1]
                 while y - 1 >= 0 and self.is_path[x][y - 1]:
                     y = y - 1
-                if x == self.width // 2 and y == 0:
-                    return None # Going up here will advance to next grid
                 return (x,y)
             elif direction == "D":
-                x = f[0]
-                y = f[1]
                 while y + 1 < self.height and self.is_path[x][y + 1]:
+                    y = y + 1
+                return (x,y)
+            return None #bad direction
+        else:
+            return None
+
+    """ PRIVATE """
+    def move_through_walls(self, f, direction, n):
+        """
+        Starting at a point f, this algorithm will iteratively move in
+        a cardinal direction until it reaches the edge of the grid or
+        interferes with a wall. It returns the stopping point
+        (may potentially) also be the same as f.
+        Will move through n many walls, but not go out of bounds
+        """
+        if self.is_in_grid(f):
+            x = f[0]
+            y = f[1]
+            walls = n
+            if not self.is_path[f[0]][f[1]]:
+                return None
+            elif direction == "R":
+                while x + 1 < self.width:
+                    if not self.is_path[x + 1][y]:
+                        if self.is_wall[x + 1][y]:
+                            if walls > 0:
+                                walls = walls - 1
+                            else:
+                                break
+                    x = x + 1
+                return (x,y)
+            elif direction == "L":
+                while x - 1 >= 0:
+                    if not self.is_path[x - 1][y]:
+                        if self.is_wall[x - 1][y]:
+                            if walls > 0:
+                                walls = walls - 1
+                            else:
+                                break
+                    x = x - 1
+                return (x,y)
+            elif direction == "U":
+                while y - 1 >= 0:
+                    if not self.is_path[x][y - 1]:
+                        if self.is_wall[x][y - 1]:
+                            if walls > 0:
+                                walls = walls - 1
+                            else:
+                                break
+                    y = y - 1
+                return (x,y)
+            elif direction == "D":
+                while y + 1 < self.height:
+                    if not self.is_path[x][y + 1]:
+                        if self.is_wall[x][y + 1]:
+                            if walls > 0:
+                                walls = walls - 1
+                            else:
+                                break
                     y = y + 1
                 return (x,y)
             return None #bad direction
@@ -601,7 +650,7 @@ class GridGraph:
         if self.is_in_grid(d) and not self.is_path[d[0]][d[1]]:
             self.is_wall[d[0]][d[1]] = True
 
-    """ UNCATEGORIZED """
+    """ UNCATEGORIZED - EMPTY """
     def essential_vertices(self):
         """
         Returns a list of vertices which, regardless of the move input,
@@ -609,6 +658,7 @@ class GridGraph:
         must be visited. Note that in all expected cases the starting vertex
         should be included in this list, so it should never be non-empty.
         """
+        return None
 
     """ PUBLIC """
     def determine_extra_paths(self, rand):
@@ -895,6 +945,33 @@ class GridGraph:
             return None
 
     """ PUBLIC """
+    def longest_path_no_wall(self, f, direction):
+        """
+        Determines the longest path from a cell f in direction, without
+        encountering a defined wall, often created by mark_walls. Will walk
+        through undefined cells.
+        """
+        return self.longest_path_n_walls(f, direction, 0)
+
+    """ PUBLIC """
+    def longest_path_n_walls(self, f, direction, n):
+        """
+        Determines the longest path from a cell f in direction, without
+        encountering a defined wall, often created by mark_walls. Will walk
+        through undefined cells.
+        """
+        end = self.move_through_walls(f, direction, n)
+        print end
+        if direction == "R":
+            return end[0] - f[0]
+        elif direction == "L":
+            return f[0] - end[0]
+        elif direction == "U":
+            return f[1] - end[1]
+        elif direction == "D":
+            return end[1] - f[1]
+
+    """ PUBLIC - EMPTY """
     #TODO
     def longest_nonintrusive_path(self, f, direction):
         """
@@ -908,7 +985,7 @@ class GridGraph:
         """
         return None
 
-    """ PUBLIC """
+    """ PUBLIC - EMPTY """
     #TODO
     def generate_basic_maze(self, complexity, f):
         return None
@@ -932,13 +1009,14 @@ class GridGraph:
         L = m*math.log(n**2/m) / math.log(n)
         return L
 
+    """ PUBLIC - EMPTY """
     def difficulty(self):
         """
 
         """
         return None
 
-    """ PUBLIC """
+    """ PUBLIC - EMPTY """
     def buildable_directions(self, p):
         """
         Returns a list of directions of which can be expanded in without
@@ -949,9 +1027,11 @@ class GridGraph:
         #a list or string containing the "good" directions
         return None
 
+    """ PUBLIC - UNFINISHED """
     def iterate(self, difficulty, complexity):
         loop_condition = False
-        while loop_condition:
+        # while loop_condition:
+        for i in range(10):
             other = self.deep_copy()
             # Do some algorithm process
             some_other_condition = False

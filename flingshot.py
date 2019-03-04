@@ -91,12 +91,10 @@ def blocks(height, width, difficulty, complexity, seed):
 
     G.iterate(complexity, difficulty)
 
-    # print G.distance
-    print G.can_get_stuck()
-    print G.trap_vertices()
+    # print G.longest_path_n_walls((4, 6), u, 1)
 
     # G.determine_extra_paths(R)
-
+    
     return G
 #--------------------------------------
 public_seed = 1149
@@ -117,3 +115,6 @@ p.print_player_view(b)
 #
 #  Good strategies for generating random patterns of paths (big idea algorithm)
 #  Variability with difficulty, complexity, key, height, etc.
+#
+# Unreturnable paths - once you go down a path you can never return to
+# another part of the maze, use trap_vertices?

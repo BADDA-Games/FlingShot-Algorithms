@@ -89,22 +89,6 @@ class TestGridGraph:
         assert G.is_path[3][15] == False
         assert G.is_wall[4][15] == False
         assert G.is_path[4][0] == True
-        # G.define_start_location((10,10))
-        # assert G.start_location == None, "Start location should not be defined out of bounds"
-        # assert G.start_location_defined == False, "Should not flag start defined out of bounds"
-        # G.define_end_location((-1,4))
-        # assert G.end_location == None, "End location should not be defined out of bounds"
-        # assert G.end_location_defined == False, "Should not flag end defined out of bounds"
-        # G.define_start_location((4,6))
-        # G.define_end_location((6,1))
-        # assert G.is_path[4][6] == True
-        # assert G.is_path[4][5] == False
-        # assert G.is_path[4][8] == True
-        # assert G.is_wall[4][5] == True
-        # assert G.is_wall[5][6] == True
-        # assert G.is_path[6][1] == True
-        # assert G.is_path[6][0] == True
-        # assert G.is_wall[6][2] == True
         return True
 
 TestRandom()
