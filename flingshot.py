@@ -69,6 +69,42 @@ def blocks(height, width, difficulty, complexity, seed):
         index = offset*-1
         v.append(G.build_path(v[index], direction, length))
 
+    """ RESOURCES: RandomSeed (R), GridGraph (G), difficulty, complexity """
+
+    """ RandomSeed USABLE AND USEFUL API
+        G.generate(low, high)
+    """
+
+    """ GridGraph USABLE AND USEFUL API
+        other = G.deep_copy()
+        G.copy(other)
+
+        G.build_path(f, dir, len)
+
+        G.in_deg_p(p)
+        G.out_deg_p(p) - useful for determining if we can screw up a vertex
+        G.trap_vertices()
+        G.fastest_path(), G.fastest_path_from_location(p)
+
+        G.longest_path_no_wall(), G.longest_path_n_walls(n)
+
+        G.vertices_x(col), G.vertices_y(row)
+        G.vertices_in_direction(p, dir)
+
+        G.depth(v) # TODO
+
+        G.possible()
+    """
+
+    def iterate():
+        loop_condition = False
+        while loop_condition:
+            other = G.deep_copy()
+            # Algorithm process
+            some_condition = False
+            if some_condition:
+                G.copy(other)
+
     #TODO if a vertex is missing, it is offset somehow by a path which destroyed
     #it. It needs to be accounted before, or ensure it can never happen
     add(1, r, 4)
@@ -89,12 +125,13 @@ def blocks(height, width, difficulty, complexity, seed):
     add(1, u, 8)
     add(1, r, 5)
 
-    G.iterate(complexity, difficulty)
+    iterate()
+    print G.vertices_in_direction((6,7), l)
 
     # print G.longest_path_n_walls((4, 6), u, 1)
 
     # G.determine_extra_paths(R)
-    
+
     return G
 #--------------------------------------
 public_seed = 1149

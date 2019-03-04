@@ -3,7 +3,8 @@ import math
 
 class GridGraph:
     # A class to show how positions on the grid
-    # direct to possible neighboring positions
+    # direct to possible neighboring positions,
+    # and much, much, much more...
     # This is a directed graph, we may have an edge without the reverse
     # Each vertex has an (x,y) position, with y=0 on top
 
@@ -1027,13 +1028,30 @@ class GridGraph:
         #a list or string containing the "good" directions
         return None
 
-    """ PUBLIC - UNFINISHED """
-    def iterate(self, difficulty, complexity):
-        loop_condition = False
-        # while loop_condition:
-        for i in range(10):
-            other = self.deep_copy()
-            # Do some algorithm process
-            some_other_condition = False
-            if some_other_condition:
-                self.copy(other)
+    """ PUBLIC """
+    def vertices_in_direction(self, p, direction):
+        """
+        From a cell p in a direction, returns a list of all vertex cells
+        which are in that direction in the order they would be reached
+        by moving in that direction, ignoring walls.
+        """
+        ls = []
+        if direction == "U" or direction == "D":
+            ls = self.vertices_x(p[0])
+            if direction == "U":
+                ls = filter((lambda x: x[1] < p[1]), ls)
+                ls.sort()
+                ls.reverse()
+            else:
+                ls = filter((lambda x: x[1] > p[1]), ls)
+                ls.sort()
+        elif direction == "L" or direction == "R":
+            ls = self.vertices_y(p[1])
+            if direction == "L":
+                ls = filter((lambda x: x[0] < p[0]), ls)
+                ls.sort()
+                ls.reverse()
+            else:
+                ls = filter((lambda x: x[0] > p[0]), ls)
+                ls.sort()
+        return ls
