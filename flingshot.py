@@ -59,6 +59,7 @@ def blocks(height, width, difficulty, complexity, seed):
     # G.define_end_location((exit, exit_height))
 
     v = [(width // 2, height-1)]
+    copy = util.MutableBool(False)
 
     u = "U"
     d = "D"
@@ -97,16 +98,16 @@ def blocks(height, width, difficulty, complexity, seed):
     """
 
     def process(g):
-        print "Hello!"
+        copy.value = True
 
     def iterate():
         loop_condition = False
         # while loop_condition:
         for _ in range(10):
+            copy.value = False
             other = G.deep_copy()
             process(other)
-            some_condition = False
-            if some_condition:
+            if copy.value:
                 G.copy(other)
 
     #TODO if a vertex is missing, it is offset somehow by a path which destroyed
@@ -131,8 +132,8 @@ def blocks(height, width, difficulty, complexity, seed):
 
     iterate()
 
-    print G.is_wall[6][3]
-    print G.wall_of((6,3))
+    # print G.is_wall[6][3]
+    # print G.wall_of((6,3))
 
     # print G.longest_path_n_walls((4, 6), u, 1)
 

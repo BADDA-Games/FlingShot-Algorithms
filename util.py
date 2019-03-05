@@ -42,3 +42,7 @@ def lookup(k, ls):
         if i[0] == k:
             return i[1]
     return None
+
+class MutableBool:
+    def __init__(self, value):
+        self.value = value
