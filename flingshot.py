@@ -90,17 +90,21 @@ def blocks(height, width, difficulty, complexity, seed):
 
         G.vertices_x(col), G.vertices_y(row)
         G.vertices_in_direction(p, dir)
-
-        G.depth(v) # TODO
+        G.wall_of(w)
+        G.depth(v)
 
         G.possible()
     """
 
+    def process(g):
+        print "Hello!"
+
     def iterate():
         loop_condition = False
-        while loop_condition:
+        # while loop_condition:
+        for _ in range(10):
             other = G.deep_copy()
-            # Algorithm process
+            process(other)
             some_condition = False
             if some_condition:
                 G.copy(other)
@@ -126,7 +130,9 @@ def blocks(height, width, difficulty, complexity, seed):
     add(1, r, 5)
 
     iterate()
-    print G.vertices_in_direction((6,7), l)
+
+    print G.is_wall[6][3]
+    print G.wall_of((6,3))
 
     # print G.longest_path_n_walls((4, 6), u, 1)
 

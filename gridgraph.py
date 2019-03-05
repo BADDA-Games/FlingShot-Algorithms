@@ -27,7 +27,6 @@ class GridGraph:
         #TODO refactor to a single array of types (enums)
         self.is_path = []
         self.is_unused_path = []
-        self.is_vertex = []
         self.is_wall = []
         self.is_unused_wall = []
         for i in range(width):
@@ -36,7 +35,6 @@ class GridGraph:
             self.expandable_directions.append(i)
             self.is_path.append(i)
             self.is_unused_path.append(i)
-            self.is_vertex.append(i)
             self.is_wall.append(i)
             self.is_unused_wall.append(i)
             self.adj[i] = []
@@ -44,7 +42,6 @@ class GridGraph:
             self.expandable_directions[i] = []
             self.is_path[i] = []
             self.is_unused_path[i] = []
-            self.is_vertex[i] = []
             self.is_wall[i] = []
             self.is_unused_wall[i] = []
             for j in range(height):
@@ -53,7 +50,6 @@ class GridGraph:
                 self.expandable_directions[i].append(j)
                 self.is_path[i].append(j)
                 self.is_unused_path[i].append(j)
-                self.is_vertex[i].append(j)
                 self.is_wall[i].append(j)
                 self.is_unused_wall[i].append(j)
                 self.adj[i][j] = []
@@ -61,7 +57,6 @@ class GridGraph:
                 self.expandable_directions[i][j] = None
                 self.is_path[i][j] = False
                 self.is_unused_path[i][j] = False
-                self.is_vertex[i][j] = False
                 self.is_wall[i][j] = False
                 self.is_unused_wall[i][j] = False
 
@@ -79,10 +74,10 @@ class GridGraph:
         other.vertices = self.vertices
         other.adj = self.adj
         other.rev = self.rev
+        other.distance = self.distance
         other.expandable_directions = self.expandable_directions
         other.is_path = self.is_path
         other.is_unused_path = self.is_unused_path
-        other.is_vertex = self.is_vertex
         other.is_wall = self.is_wall
         other.is_unused_wall = self.is_unused_wall
         return other
@@ -91,10 +86,10 @@ class GridGraph:
         self.vertices = other.vertices
         self.adj = other.adj
         self.rev = other.rev
+        self.distance = other.distance
         self.expandable_directions = other.expandable_directions
         self.is_path = other.is_path
         self.is_unused_path = other.is_unused_path
-        self.is_vertex = other.is_vertex
         self.is_wall = other.is_wall
         self.is_unused_wall = other.is_unused_wall
 
@@ -117,7 +112,7 @@ class GridGraph:
                     self.is_path[current][f[1]] = True
                     current = current + 1
 
-    """ UNCATEGORIZED """
+    """ PRIVATE """
     def in_deg(self,x,y):
         """
         Returns the in-degree of a point (x,y), the number of vertices that can
@@ -125,7 +120,7 @@ class GridGraph:
         """
         return len(self.rev[x][y])
 
-    """ UNCATEGORIZED """
+    """ PUBLIC """
     def in_deg_p(self,xy):
         """
         Returns the in-degree of a point xy, the number of vertices that can
@@ -133,7 +128,7 @@ class GridGraph:
         """
         return self.in_deg(xy[0],xy[1])
 
-    """ UNCATEGORIZED """
+    """ PRIVATE """
     def out_deg(self,x,y):
         """
         Returns the out-degree of a point (x,y), the number of vertices it can
@@ -141,13 +136,21 @@ class GridGraph:
         """
         return len(self.adj[x][y])
 
-    """ UNCATEGORIZED """
+    """ PUBLIC """
     def out_deg_p(self,xy):
         """
         Returns the out-degree of a point xy, the number of vertices it can
         immediately move to
         """
         return self.out_deg(xy[0],xy[1])
+
+    """ PUBLIC """
+    def depth(self, v):
+        """
+        Returns the shortest number of moves from the start,
+        required to reach a vertex v, ie the minimum distance required
+        """
+        return util.lookup(v, self.distance)
 
     """ PRIVATE """
     def is_in_grid(self, p):
@@ -271,25 +274,26 @@ class GridGraph:
         #TODO expandable_directions?
         self.adj = []
         self.rev = []
+        self.is_wall = []
         self.vertices = []
         self.distance = []
         for i in range(self.width):
             self.adj.append(i)
             self.rev.append(i)
-            self.vertices.append(i)
+            self.is_wall.append(i)
             self.distance.append(i)
             self.adj[i] = []
             self.rev[i] = []
-            self.vertices[i] = []
+            self.is_wall[i] = []
             self.distance[i] = []
             for j in range(self.height):
                 self.adj[i].append(j)
                 self.rev[i].append(j)
-                self.vertices[i].append(j)
+                self.is_wall[i].append(j)
                 self.distance[i].append(j)
                 self.adj[i][j] = []
                 self.rev[i][j] = []
-                self.vertices[i][j] = []
+                self.is_wall[i][j] = False
                 self.distance[i][j] = []
 
     """ PRIVATE """
@@ -515,6 +519,28 @@ class GridGraph:
             if y == v[1]:
                 list.append(v)
         return list
+
+    """ PUBLIC """
+    def wall_of(self, p):
+        """
+        Returns a list of vertices adjacent to a wall p.
+        If p is not a wall, returns None
+        """
+        if not self.is_in_grid or not self.is_wall[p[0]][p[1]]:
+            return None
+        else:
+            ls = []
+            x = p[0]
+            y = p[1]
+            if self.is_in_grid((x-1, y)) and (x-1, y) in self.vertices:
+                ls.append((x-1, y))
+            if self.is_in_grid((x+1, y)) and (x+1, y) in self.vertices:
+                ls.append((x+1, y))
+            if self.is_in_grid((x, y-1)) and (x, y-1) in self.vertices:
+                ls.append((x, y-1))
+            if self.is_in_grid((x, y+1)) and (x, y+1) in self.vertices:
+                ls.append((x, y+1))
+            return ls
 
     """ PRIVATE """
     def add_to_lists(self, f, t):
