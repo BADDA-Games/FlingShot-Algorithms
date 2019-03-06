@@ -71,6 +71,7 @@ class GridGraph:
         Creates a deep copy of the current GridGraph data structure
         """
         other = GridGraph(self.width, self.height)
+        other.start = self.start
         other.vertices = self.vertices
         other.adj = self.adj
         other.rev = self.rev
@@ -82,7 +83,12 @@ class GridGraph:
         other.is_unused_wall = self.is_unused_wall
         return other
 
+    """ PUBLIC """
     def copy(self, other):
+        """
+        Copies another GridGraph's information.
+        """
+        self.start = other.start
         self.vertices = other.vertices
         self.adj = other.adj
         self.rev = other.rev
@@ -988,7 +994,6 @@ class GridGraph:
         through undefined cells.
         """
         end = self.move_through_walls(f, direction, n)
-        print end
         if direction == "R":
             return end[0] - f[0]
         elif direction == "L":
@@ -1010,11 +1015,6 @@ class GridGraph:
         should be lessened. Adding the edge must keep the maze in a solvable state, if
         it is already.
         """
-        return None
-
-    """ PUBLIC - EMPTY """
-    #TODO
-    def generate_basic_maze(self, complexity, f):
         return None
 
     """ PUBLIC """
@@ -1066,8 +1066,7 @@ class GridGraph:
             ls = self.vertices_x(p[0])
             if direction == "U":
                 ls = filter((lambda x: x[1] < p[1]), ls)
-                ls.sort()
-                ls.reverse()
+                ls.sort(reverse=True)
             else:
                 ls = filter((lambda x: x[1] > p[1]), ls)
                 ls.sort()
@@ -1075,8 +1074,7 @@ class GridGraph:
             ls = self.vertices_y(p[1])
             if direction == "L":
                 ls = filter((lambda x: x[0] < p[0]), ls)
-                ls.sort()
-                ls.reverse()
+                ls.sort(reverse=True)
             else:
                 ls = filter((lambda x: x[0] > p[0]), ls)
                 ls.sort()

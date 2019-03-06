@@ -60,6 +60,7 @@ def blocks(height, width, difficulty, complexity, seed):
 
     v = [(width // 2, height-1)]
     copy = util.MutableBool(False)
+    valid = util.MutableBool(False)
 
     u = "U"
     d = "D"
@@ -85,25 +86,67 @@ def blocks(height, width, difficulty, complexity, seed):
         G.in_deg_p(p)
         G.out_deg_p(p) - useful for determining if we can screw up a vertex
         G.trap_vertices()
+        G.can_get_stuck()
         G.fastest_path(), G.fastest_path_from_location(p)
 
         G.longest_path_no_wall(), G.longest_path_n_walls(n)
+        G.longest_noninterfering_path() ?
 
         G.vertices_x(col), G.vertices_y(row)
         G.vertices_in_direction(p, dir)
         G.wall_of(w)
         G.depth(v)
 
-        G.possible()
+        G.complexity()
+        G.difficulty() #todo
+        G.essential_vertices() #todo
+
+        G.possible(), G.possible_from_location(p)
     """
 
+    def check(g):
+        start = g.start
+        left = g.is_wall[start[0]-1][start[1]]
+        right = g.is_wall[start[0]+1][start[1]]
+        up = g.is_wall[start[0]][start[1]-1]
+        if not (left or right or up):
+            return
+
+    def try_build(g, v):
+        return None
+
     def process(g):
-        copy.value = True
+        dists = g.distance
+        valid.value = False
+        print dists
+        # while not valid.value:
+        for i in range(10):
+            # Determine which vertex to use
+            if len(dists) == 0:
+                print "ERROR - No good vertices"
+                return
+            #TODO Better probability function? Use some GG methods!
+            probabilities = map(lambda x: 1 + 2*x[1]**2, dists)
+            ranges = []
+            for p in probabilities:
+                if len(ranges) == 0: # First run through loop
+                    ranges.append((0, probabilities[0]))
+                else:
+                    next = ranges[-1][1] + 1
+                    ranges.append((next, next+p))
+            choice = R.generate(ranges[0][0], ranges[-1][1])
+            print choice
+            vertex = None
+            for i in range(len(ranges)):
+                if util.between(choice, ranges[i]):
+                    vertex = dists[i][0]
+            print vertex
+
 
     def iterate():
         loop_condition = False
         # while loop_condition:
-        for _ in range(10):
+        for _ in range(1):
             copy.value = False
             other = G.deep_copy()
             process(other)
@@ -132,16 +175,11 @@ def blocks(height, width, difficulty, complexity, seed):
 
     iterate()
 
-    # print G.is_wall[6][3]
-    # print G.wall_of((6,3))
-
-    # print G.longest_path_n_walls((4, 6), u, 1)
-
-    # G.determine_extra_paths(R)
+    G.determine_extra_paths(R)
 
     return G
 #--------------------------------------
-public_seed = 1149
+public_seed = 1151
 level = 1
 b = create(public_seed, level)
 
