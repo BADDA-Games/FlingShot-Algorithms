@@ -92,7 +92,6 @@ def blocks(height, width, difficulty, complexity, seed):
         G.longest_path_no_wall(), G.longest_path_n_walls(n)
         G.longest_noninterfering_path() ?
 
-        G.vertices_x(col), G.vertices_y(row)
         G.vertices_in_direction(p, dir)
         G.wall_of(w)
         G.depth(v)
@@ -100,6 +99,9 @@ def blocks(height, width, difficulty, complexity, seed):
         G.complexity()
         G.difficulty() #todo
         G.essential_vertices() #todo
+
+        G.built_directions
+        G.movable_directions
 
         G.possible(), G.possible_from_location(p)
     """
@@ -113,17 +115,16 @@ def blocks(height, width, difficulty, complexity, seed):
             return
 
     def try_build(g, v):
-        return None
+        print v
+        valid.value = True
 
     def process(g):
         dists = g.distance
         valid.value = False
-        print dists
-        # while not valid.value:
-        for i in range(10):
+        while not valid.value:
             # Determine which vertex to use
             if len(dists) == 0:
-                print "ERROR - No good vertices"
+                print "ERROR - No good vertices."
                 return
             #TODO Better probability function? Use some GG methods!
             probabilities = map(lambda x: 1 + 2*x[1]**2, dists)
@@ -135,13 +136,15 @@ def blocks(height, width, difficulty, complexity, seed):
                     next = ranges[-1][1] + 1
                     ranges.append((next, next+p))
             choice = R.generate(ranges[0][0], ranges[-1][1])
-            print choice
             vertex = None
             for i in range(len(ranges)):
                 if util.between(choice, ranges[i]):
                     vertex = dists[i][0]
-            print vertex
-
+            if not vertex == None:
+                try_build(g, vertex)
+            else:
+                print "ERROR - Could not choose a vertex."
+                return
 
     def iterate():
         loop_condition = False
@@ -173,9 +176,12 @@ def blocks(height, width, difficulty, complexity, seed):
     add(1, u, 8)
     add(1, r, 5)
 
+    print G.built_directions
+    print G.movable_directions
+
     iterate()
 
-    G.determine_extra_paths(R)
+    # G.determine_extra_paths(R)
 
     return G
 #--------------------------------------

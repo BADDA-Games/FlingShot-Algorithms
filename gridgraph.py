@@ -23,7 +23,8 @@ class GridGraph:
 
         self.adj = []
         self.rev = []
-        self.expandable_directions = []
+        self.built_directions = []
+        self.movable_directions = []
         #TODO refactor to a single array of types (enums)
         self.is_path = []
         self.is_unused_path = []
@@ -32,14 +33,16 @@ class GridGraph:
         for i in range(width):
             self.adj.append(i)
             self.rev.append(i)
-            self.expandable_directions.append(i)
+            self.built_directions.append(i)
+            self.movable_directions.append(i)
             self.is_path.append(i)
             self.is_unused_path.append(i)
             self.is_wall.append(i)
             self.is_unused_wall.append(i)
             self.adj[i] = []
             self.rev[i] = []
-            self.expandable_directions[i] = []
+            self.built_directions[i] = []
+            self.movable_directions[i] = []
             self.is_path[i] = []
             self.is_unused_path[i] = []
             self.is_wall[i] = []
@@ -47,14 +50,16 @@ class GridGraph:
             for j in range(height):
                 self.adj[i].append(j)
                 self.rev[i].append(j)
-                self.expandable_directions[i].append(j)
+                self.built_directions[i].append(j)
+                self.movable_directions[i].append(j)
                 self.is_path[i].append(j)
                 self.is_unused_path[i].append(j)
                 self.is_wall[i].append(j)
                 self.is_unused_wall[i].append(j)
                 self.adj[i][j] = []
                 self.rev[i][j] = []
-                self.expandable_directions[i][j] = None
+                self.built_directions[i][j] = []
+                self.movable_directions[i][j] = []
                 self.is_path[i][j] = False
                 self.is_unused_path[i][j] = False
                 self.is_wall[i][j] = False
@@ -76,7 +81,7 @@ class GridGraph:
         other.adj = self.adj
         other.rev = self.rev
         other.distance = self.distance
-        other.expandable_directions = self.expandable_directions
+        other.built_directions = self.built_directions
         other.is_path = self.is_path
         other.is_unused_path = self.is_unused_path
         other.is_wall = self.is_wall
@@ -93,7 +98,8 @@ class GridGraph:
         self.adj = other.adj
         self.rev = other.rev
         self.distance = other.distance
-        self.expandable_directions = other.expandable_directions
+        self.built_directions = other.built_directions
+        self.movable_directions = other.movable_directions
         self.is_path = other.is_path
         self.is_unused_path = other.is_unused_path
         self.is_wall = other.is_wall
@@ -177,6 +183,24 @@ class GridGraph:
         Returns t, the ending location.
         """
         self.add_edge(f,t)
+        dir = self.path_orientation(f,t)
+        if dir == "H":
+            if f[0] > t[0]: # Going left
+                # TODO NOT EQUAL L OR R BUT ADD IT
+                util.add_if_missing("L", self.built_directions[f[0]][f[1]])
+                util.add_if_missing("R", self.built_directions[t[0]][t[1]])
+            else: # Going right
+                util.add_if_missing("R", self.built_directions[f[0]][f[1]])
+                util.add_if_missing("L", self.built_directions[t[0]][t[1]])
+        else: # Going up or down
+            if f[1] > t[1]: # Going up
+                util.add_if_missing("U", self.built_directions[f[0]][f[1]])
+                util.add_if_missing("D", self.built_directions[t[0]][t[1]])
+            else: # Going down
+                util.add_if_missing("D", self.built_directions[f[0]][f[1]])
+                util.add_if_missing("U", self.built_directions[t[0]][t[1]])
+
+
         self.traverse() #inefficient, but works
         # self.update_path_sides(f, t)
         return t;
@@ -270,6 +294,25 @@ class GridGraph:
         self.reset_lists()
         self.bfs((self.width//2, self.height-1))
         self.mark_walls()
+        self.update_movable_directions()
+
+    """ PRIVATE """
+    def update_movable_directions(self):
+        for v in self.vertices:
+            # Check if the 4 cardinal directions are paths, if they are label
+            # them as such, that we can move there
+            up = (v[0], v[1]-1)
+            down = (v[0], v[1]+1)
+            left = (v[0]-1, v[1])
+            right = (v[0]+1, v[1])
+            if self.is_in_grid(up) and self.is_path[up[0]][up[1]]:
+                self.movable_directions[v[0]][v[1]].append("U")
+            if self.is_in_grid(down) and self.is_path[down[0]][down[1]]:
+                self.movable_directions[v[0]][v[1]].append("D")
+            if self.is_in_grid(left) and self.is_path[left[0]][left[1]]:
+                self.movable_directions[v[0]][v[1]].append("L")
+            if self.is_in_grid(right) and self.is_path[right[0]][right[1]]:
+                self.movable_directions[v[0]][v[1]].append("R")
 
     """ PRIVATE """
     def reset_lists(self):
@@ -277,30 +320,35 @@ class GridGraph:
         Removes all elements from self.adj and self.rev and defaults them to
         empty twice-indicied lists.
         """
-        #TODO expandable_directions?
+        #TODO built_directions?
         self.adj = []
         self.rev = []
         self.is_wall = []
         self.vertices = []
         self.distance = []
+        self.movable_directions = []
         for i in range(self.width):
             self.adj.append(i)
             self.rev.append(i)
             self.is_wall.append(i)
             self.distance.append(i)
+            self.movable_directions.append(i)
             self.adj[i] = []
             self.rev[i] = []
             self.is_wall[i] = []
             self.distance[i] = []
+            self.movable_directions[i] = []
             for j in range(self.height):
                 self.adj[i].append(j)
                 self.rev[i].append(j)
                 self.is_wall[i].append(j)
                 self.distance[i].append(j)
+                self.movable_directions[i].append(j)
                 self.adj[i][j] = []
                 self.rev[i][j] = []
                 self.is_wall[i][j] = False
                 self.distance[i][j] = []
+                self.movable_directions[i][j] = []
 
     """ PRIVATE """
     def bfs(self, start):
@@ -370,7 +418,7 @@ class GridGraph:
         """
         return False if self.fastest_path() == None else True
 
-    """ UNCATEGORIZED """
+    """ PRIVATE """
     def possible_from_location(self, p):
         """
         Given a location (must be a vertex) in the graph, return
@@ -502,7 +550,7 @@ class GridGraph:
         else:
             return None
 
-    """ UNCATEGORIZED """
+    """ PRIVATE """
     def vertices_x(self, x):
         """
         Returns all points in the vertices list which
@@ -514,7 +562,7 @@ class GridGraph:
                 list.append(v)
         return list
 
-    """ UNCATEGORIZED """
+    """ PRIVATE """
     def vertices_y(self, y):
         """
         Returns all points in the vertices list which
@@ -1041,17 +1089,6 @@ class GridGraph:
         """
 
         """
-        return None
-
-    """ PUBLIC - EMPTY """
-    def buildable_directions(self, p):
-        """
-        Returns a list of directions of which can be expanded in without
-        removing the vertex p and without screwing up something
-        """
-        #TODO figure out exactly what this method needs, or if this is more
-        #of a class variable (similar to adj), which every vertex could hold
-        #a list or string containing the "good" directions
         return None
 
     """ PUBLIC """
