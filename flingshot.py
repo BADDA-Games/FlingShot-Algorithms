@@ -148,9 +148,9 @@ def blocks(height, width, difficulty, complexity, seed):
         #TODO probably revise this weight function
         def weight_assignments(dir):
             weight = {
-                u: 10,
-                l: 4,
-                r: 4,
+                u: 3,
+                l: 2,
+                r: 2,
                 d: 1
             }
             return weight.get(dir, "Error - Invalid Direction")
@@ -161,6 +161,7 @@ def blocks(height, width, difficulty, complexity, seed):
          #TODO change 1 to some general function for n
         max_length = g.longest_path_n_walls(v, dir, 1)
         length = R.generate(1, max_length)
+        # print "Building", v, dir, length
         g.build_path(v, dir, length)
         return True
 
@@ -190,7 +191,7 @@ def blocks(height, width, difficulty, complexity, seed):
     def iterate():
         loop_condition = False
         # while loop_condition:
-        for _ in range(25):
+        for _ in range(20):
             copy.value = False
             other = deepcopy(G)
             process(other)
@@ -223,7 +224,7 @@ def blocks(height, width, difficulty, complexity, seed):
 
     return G
 #--------------------------------------
-public_seed = 1153
+public_seed = 1154
 level = 1
 b = create(public_seed, level)
 
