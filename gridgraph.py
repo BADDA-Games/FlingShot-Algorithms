@@ -317,16 +317,12 @@ class GridGraph:
             left = (v[0]-1, v[1])
             right = (v[0]+1, v[1])
             if self.is_in_grid(up) and self.is_path[up[0]][up[1]]:
-                print v, "Up"
                 self.movable_directions[v[0]][v[1]].append("U")
             if self.is_in_grid(down) and self.is_path[down[0]][down[1]]:
-                print v, "Down"
                 self.movable_directions[v[0]][v[1]].append("D")
             if self.is_in_grid(left) and self.is_path[left[0]][left[1]]:
-                print v, "Left"
                 self.movable_directions[v[0]][v[1]].append("L")
             if self.is_in_grid(right) and self.is_path[right[0]][right[1]]:
-                print v, "Right"
                 self.movable_directions[v[0]][v[1]].append("R")
 
     """ PRIVATE """

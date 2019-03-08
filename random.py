@@ -1,3 +1,5 @@
+import util
+
 class RandomSeed:
 
     def __init__(self, seed):
@@ -11,3 +13,10 @@ class RandomSeed:
         self.seed = (3515366 * self.seed + 12345) % 99999989
         value = (self.seed % mod) + low
         return value
+
+    def choose_from(self, tuple_ranges):
+        choice = self.generate(tuple_ranges[0][0], tuple_ranges[-1][1])
+        for i in range(len(tuple_ranges)):
+            if util.between(choice, tuple_ranges[i]):
+                return i
+        return None

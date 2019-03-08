@@ -51,6 +51,17 @@ def between(n, tuple):
     smaller, larger = minmax(tuple[0], tuple[1])
     return smaller <= n <= larger
 
+def tuple_ranges(weight_function, values):
+    probabilities = map(weight_function, values)
+    ranges = []
+    for p in probabilities:
+        if len(ranges) == 0: # First run through loop
+            ranges.append((0, probabilities[0]))
+        else:
+            next = ranges[-1][1] + 1
+            ranges.append((next, next+p))
+    return ranges
+
 class MutableBool:
     def __init__(self, value):
         self.value = value

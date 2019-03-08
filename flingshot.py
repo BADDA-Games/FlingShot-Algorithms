@@ -114,6 +114,7 @@ def blocks(height, width, difficulty, complexity, seed):
         if not (left or right or up):
             return
         valid.value = True
+        copy.value = True
 
     # Given a vertex v in the graph g, expand on it
     def try_build(g, v):
@@ -121,10 +122,11 @@ def blocks(height, width, difficulty, complexity, seed):
         Returns True if we sucessfully decide to expand on it,
         or False if we do not.
         """
+        #TODO special case for (4,0) === (width//2, 0)
+        #We should not treat it as a vertex for this case if movable is only "D"
         built = g.built_directions[v[0]][v[1]]
         movable = g.movable_directions[v[0]][v[1]]
         initial = g.initial_built_direction[v[0]][v[1]]
-        print initial
         good = g.potential_directions(v)
         if initial == u or initial == d:
             if u in good:
@@ -139,7 +141,23 @@ def blocks(height, width, difficulty, complexity, seed):
         good = [x for x in good if x not in built]
         if len(good) == 0:
             return False
-
+        def weight_assignments(dir):
+            weight = {
+                u: 10,
+                l: 4,
+                r: 4,
+                d: 1
+            }
+            return weight.get(dir, "Error - Invalid Direction")
+        ranges = util.tuple_ranges(weight_assignments, good)
+        choice = R.choose_from(ranges)
+        dir = good[choice]
+        # If fail, try another direction before returning to parent function
+         #TODO change 1 to some general function for n
+        max_length = g.longest_path_n_walls(v, dir, 1)
+        length = R.generate(1, max_length)
+        g.build_path(v, dir, length)
+        return True
 
     # Choose a vertex from our list and try to build on it
     def process(g):
@@ -152,18 +170,9 @@ def blocks(height, width, difficulty, complexity, seed):
                 return
             #TODO Better probability function? Use some GG methods!
             probabilities = map(lambda x: 1 + 2*x[1]**2, dists)
-            ranges = []
-            for p in probabilities:
-                if len(ranges) == 0: # First run through loop
-                    ranges.append((0, probabilities[0]))
-                else:
-                    next = ranges[-1][1] + 1
-                    ranges.append((next, next+p))
-            choice = R.generate(ranges[0][0], ranges[-1][1])
-            vertex = None
-            for i in range(len(ranges)):
-                if util.between(choice, ranges[i]):
-                    vertex = dists[i][0]
+            ranges = util.tuple_ranges((lambda x: 1+2*x[1]**2), dists)
+            choice = R.choose_from(ranges)
+            vertex = dists[choice][0]
             if not vertex == None:
                 if try_build(g, vertex):
                     check(g)
@@ -176,8 +185,10 @@ def blocks(height, width, difficulty, complexity, seed):
     def iterate():
         loop_condition = False
         # while loop_condition:
-        for _ in range(1):
+        for _ in range(20):
             copy.value = False
+            #TODO deep_copy is coyping some references, we need only values
+            #Think whenever there is a list that becomes a reference
             other = G.deep_copy()
             process(other)
             if copy.value:
@@ -185,23 +196,23 @@ def blocks(height, width, difficulty, complexity, seed):
 
     #TODO if a vertex is missing, it is offset somehow by a path which destroyed
     #it. It needs to be accounted before, or ensure it can never happen
-    add(1, r, 4)
-    add(1, u, 3)
-    add(1, l, 2)
-    add(1, u, 6)
-    add(1, l, 4)
-    add(1, d, 1)
-    add(1, r, 2)
-    add(1, u, 3)
-    add(1, r, 2)
-    add(1, u, 1)
-    add(1, r, 1)
-    add(1, u, 2)
-    add(1, l, 3)
-    add(14, u, 5)
-    add(1, l, 4)
-    add(1, u, 8)
-    add(1, r, 5)
+    # add(1, r, 4)
+    # add(1, u, 3)
+    # add(1, l, 2)
+    # add(1, u, 6)
+    # add(1, l, 4)
+    # add(1, d, 1)
+    # add(1, r, 2)
+    # add(1, u, 3)
+    # add(1, r, 2)
+    # add(1, u, 1)
+    # add(1, r, 1)
+    # add(1, u, 2)
+    # add(1, l, 3)
+    # add(14, u, 5)
+    # add(1, l, 4)
+    # add(1, u, 8)
+    # add(1, r, 5)
 
     iterate()
 
@@ -209,7 +220,7 @@ def blocks(height, width, difficulty, complexity, seed):
 
     return G
 #--------------------------------------
-public_seed = 1151
+public_seed = 1140
 level = 1
 b = create(public_seed, level)
 
