@@ -24,6 +24,7 @@ class GridGraph:
         self.adj = []
         self.rev = []
         self.built_directions = []
+        self.initial_built_direction = []
         self.movable_directions = []
         #TODO refactor to a single array of types (enums)
         self.is_path = []
@@ -34,6 +35,7 @@ class GridGraph:
             self.adj.append(i)
             self.rev.append(i)
             self.built_directions.append(i)
+            self.initial_built_direction.append(i)
             self.movable_directions.append(i)
             self.is_path.append(i)
             self.is_unused_path.append(i)
@@ -42,6 +44,7 @@ class GridGraph:
             self.adj[i] = []
             self.rev[i] = []
             self.built_directions[i] = []
+            self.initial_built_direction[i] = []
             self.movable_directions[i] = []
             self.is_path[i] = []
             self.is_unused_path[i] = []
@@ -51,6 +54,7 @@ class GridGraph:
                 self.adj[i].append(j)
                 self.rev[i].append(j)
                 self.built_directions[i].append(j)
+                self.initial_built_direction[i].append(j)
                 self.movable_directions[i].append(j)
                 self.is_path[i].append(j)
                 self.is_unused_path[i].append(j)
@@ -59,6 +63,7 @@ class GridGraph:
                 self.adj[i][j] = []
                 self.rev[i][j] = []
                 self.built_directions[i][j] = []
+                self.initial_built_direction[i][j] = None
                 self.movable_directions[i][j] = []
                 self.is_path[i][j] = False
                 self.is_unused_path[i][j] = False
@@ -82,6 +87,8 @@ class GridGraph:
         other.rev = self.rev
         other.distance = self.distance
         other.built_directions = self.built_directions
+        other.initial_built_direction = self.initial_built_direction
+        other.movable_directions = self.movable_directions
         other.is_path = self.is_path
         other.is_unused_path = self.is_unused_path
         other.is_wall = self.is_wall
@@ -99,6 +106,7 @@ class GridGraph:
         self.rev = other.rev
         self.distance = other.distance
         self.built_directions = other.built_directions
+        self.initial_built_direction = other.initial_built_direction
         self.movable_directions = other.movable_directions
         self.is_path = other.is_path
         self.is_unused_path = other.is_unused_path
@@ -186,21 +194,24 @@ class GridGraph:
         dir = self.path_orientation(f,t)
         if dir == "H":
             if f[0] > t[0]: # Going left
-                # TODO NOT EQUAL L OR R BUT ADD IT
                 util.add_if_missing("L", self.built_directions[f[0]][f[1]])
                 util.add_if_missing("R", self.built_directions[t[0]][t[1]])
+                # Initial built direction is the one which lets you get back to
+                # The previous vertex, important for additional expansion
+                self.initial_built_direction[t[0]][t[1]] = "R"
             else: # Going right
                 util.add_if_missing("R", self.built_directions[f[0]][f[1]])
                 util.add_if_missing("L", self.built_directions[t[0]][t[1]])
+                self.initial_built_direction[t[0]][t[1]] = "L"
         else: # Going up or down
             if f[1] > t[1]: # Going up
                 util.add_if_missing("U", self.built_directions[f[0]][f[1]])
                 util.add_if_missing("D", self.built_directions[t[0]][t[1]])
+                self.initial_built_direction[t[0]][t[1]] = "D"
             else: # Going down
                 util.add_if_missing("D", self.built_directions[f[0]][f[1]])
                 util.add_if_missing("U", self.built_directions[t[0]][t[1]])
-
-
+                self.initial_built_direction[t[0]][t[1]] = "U"
         self.traverse() #inefficient, but works
         # self.update_path_sides(f, t)
         return t;
@@ -306,12 +317,16 @@ class GridGraph:
             left = (v[0]-1, v[1])
             right = (v[0]+1, v[1])
             if self.is_in_grid(up) and self.is_path[up[0]][up[1]]:
+                print v, "Up"
                 self.movable_directions[v[0]][v[1]].append("U")
             if self.is_in_grid(down) and self.is_path[down[0]][down[1]]:
+                print v, "Down"
                 self.movable_directions[v[0]][v[1]].append("D")
             if self.is_in_grid(left) and self.is_path[left[0]][left[1]]:
+                print v, "Left"
                 self.movable_directions[v[0]][v[1]].append("L")
             if self.is_in_grid(right) and self.is_path[right[0]][right[1]]:
+                print v, "Right"
                 self.movable_directions[v[0]][v[1]].append("R")
 
     """ PRIVATE """
@@ -1116,3 +1131,20 @@ class GridGraph:
                 ls = filter((lambda x: x[0] > p[0]), ls)
                 ls.sort()
         return ls
+
+    """ PUBLIC """
+    def potential_directions(self, p):
+        """
+        Based solely on p's location in the grid, determines the directions
+        it could ever possibly move in. Essentially, if it's next to a wall.
+        """
+        dirs = ["U", "D", "L", "R"]
+        if p[0] == 0:
+            dirs.remove("L")
+        elif p[0] == self.width - 1:
+            dirs.remove("R")
+        if p[1] == 0:
+            dirs.remove("U")
+        elif p[1] == self.height - 1:
+            dirs.remove("D")
+        return dirs

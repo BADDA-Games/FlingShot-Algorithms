@@ -51,7 +51,6 @@ class TestGridGraph:
         assert len(G.vertices) == 1, "Vertices initialized with (width//2, height-1)"
         assert len(G.is_path) == width, "Path has incorrect width"
         assert len(G.is_unused_path) == width, "Path has incorrect width"
-        assert len(G.initial_direction) == width, "Vertex has incorrect width"
         assert len(G.is_wall) == width, "Wall has incorrect width"
         assert len(G.is_unused_wall) == width, "Unused wall has incorrect width"
         return True
@@ -68,10 +67,11 @@ class TestGridGraph:
         assert G.start == O.start, "Starts are not equal"
         assert G.adj == O.adj, "Adjacency lists are not equal"
         assert G.rev == O.rev, "Reverse lists are not equal"
-        assert G.initial_direction == O.initial_direction, "Expandable directions are not equal"
+        assert G.built_directions == O.built_directions, "Built directions are not equal"
+        assert G.movable_directions == O.movable_directions, "Movable directions are not equal"
+        assert G.initial_built_direction == O.initial_built_direction, "Initial built direction are not equal"
         assert G.is_path == O.is_path, "is_path lists are not equal"
         assert G.is_unused_path == O.is_unused_path, "Unused path lists are not equal"
-        assert G.initial_direction == O.initial_direction, "initial_direction lists are not equal"
         assert G.is_wall == O.is_wall, "is_wall lists are not equal"
         assert G.is_unused_wall == O.is_unused_wall, "is_unused_wall lists are not equal"
         return True

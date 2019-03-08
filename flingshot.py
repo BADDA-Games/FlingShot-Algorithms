@@ -113,11 +113,35 @@ def blocks(height, width, difficulty, complexity, seed):
         up = g.is_wall[start[0]][start[1]-1]
         if not (left or right or up):
             return
-
-    def try_build(g, v):
-        print v
         valid.value = True
 
+    # Given a vertex v in the graph g, expand on it
+    def try_build(g, v):
+        """
+        Returns True if we sucessfully decide to expand on it,
+        or False if we do not.
+        """
+        built = g.built_directions[v[0]][v[1]]
+        movable = g.movable_directions[v[0]][v[1]]
+        initial = g.initial_built_direction[v[0]][v[1]]
+        print initial
+        good = g.potential_directions(v)
+        if initial == u or initial == d:
+            if u in good:
+                good.remove(u)
+            if d in good:
+                good.remove(d)
+        elif initial == l or initial == r:
+            if l in good:
+                good.remove(l)
+            if r in good:
+                good.remove(r)
+        good = [x for x in good if x not in built]
+        if len(good) == 0:
+            return False
+
+
+    # Choose a vertex from our list and try to build on it
     def process(g):
         dists = g.distance
         valid.value = False
@@ -141,7 +165,10 @@ def blocks(height, width, difficulty, complexity, seed):
                 if util.between(choice, ranges[i]):
                     vertex = dists[i][0]
             if not vertex == None:
-                try_build(g, vertex)
+                if try_build(g, vertex):
+                    check(g)
+                else:
+                    dists = filter(lambda x: x[0] != vertex, dists)
             else:
                 print "ERROR - Could not choose a vertex."
                 return
@@ -175,9 +202,6 @@ def blocks(height, width, difficulty, complexity, seed):
     add(1, l, 4)
     add(1, u, 8)
     add(1, r, 5)
-
-    print G.built_directions
-    print G.movable_directions
 
     iterate()
 

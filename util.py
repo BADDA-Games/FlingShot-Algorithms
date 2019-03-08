@@ -48,8 +48,7 @@ def between(n, tuple):
     Given tuple, a pair of numbers, and n, returns True if
     n falls between the two numbers (or equal to), or False otherwise
     """
-    smaller = min(tuple[0], tuple[1])
-    larger = max(tuple[0], tuple[1])
+    smaller, larger = minmax(tuple[0], tuple[1])
     return smaller <= n <= larger
 
 class MutableBool:
