@@ -35,7 +35,6 @@ class TestGridGraph:
 
     def __init__(self):
         print_t("GridGraph initialization is correct", self.initialization())
-        print_t("GridGraph copying is correct", self.copy())
         print_t("Defining beginning and end locations works as intended", self.define_locations())
 
     def initialization(self):
@@ -53,27 +52,6 @@ class TestGridGraph:
         assert len(G.is_unused_path) == width, "Path has incorrect width"
         assert len(G.is_wall) == width, "Wall has incorrect width"
         assert len(G.is_unused_wall) == width, "Unused wall has incorrect width"
-        return True
-
-    def copy(self):
-        width = 7
-        height = 9
-        G = gridgraph.GridGraph(width, height)
-        O = G.deep_copy()
-        assert G.width == O.width, "Widths are not equal"
-        assert G.height == O.height, "Heights are not equal"
-        assert G.vertices == O.vertices, "Vertices are not equal"
-        assert G.distance == O.distance, "Distances are not equal"
-        assert G.start == O.start, "Starts are not equal"
-        assert G.adj == O.adj, "Adjacency lists are not equal"
-        assert G.rev == O.rev, "Reverse lists are not equal"
-        assert G.built_directions == O.built_directions, "Built directions are not equal"
-        assert G.movable_directions == O.movable_directions, "Movable directions are not equal"
-        assert G.initial_built_direction == O.initial_built_direction, "Initial built direction are not equal"
-        assert G.is_path == O.is_path, "is_path lists are not equal"
-        assert G.is_unused_path == O.is_unused_path, "Unused path lists are not equal"
-        assert G.is_wall == O.is_wall, "is_wall lists are not equal"
-        assert G.is_unused_wall == O.is_unused_wall, "is_unused_wall lists are not equal"
         return True
 
     def define_locations(self):

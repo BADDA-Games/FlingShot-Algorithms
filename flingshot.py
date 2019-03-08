@@ -2,6 +2,7 @@ import gridgraph as gg
 import printer as p
 import random as rand
 import util
+from copy import deepcopy
 
 def create(seed, level):
     return create_blocks(4, 3, seed)
@@ -127,6 +128,9 @@ def blocks(height, width, difficulty, complexity, seed):
         built = g.built_directions[v[0]][v[1]]
         movable = g.movable_directions[v[0]][v[1]]
         initial = g.initial_built_direction[v[0]][v[1]]
+        #Special case for cell right above exit
+        if v == (g.width//2, 0) and movable == ["D"]:
+                return False
         good = g.potential_directions(v)
         if initial == u or initial == d:
             if u in good:
@@ -141,6 +145,7 @@ def blocks(height, width, difficulty, complexity, seed):
         good = [x for x in good if x not in built]
         if len(good) == 0:
             return False
+        #TODO probably revise this weight function
         def weight_assignments(dir):
             weight = {
                 u: 10,
@@ -185,11 +190,9 @@ def blocks(height, width, difficulty, complexity, seed):
     def iterate():
         loop_condition = False
         # while loop_condition:
-        for _ in range(20):
+        for _ in range(25):
             copy.value = False
-            #TODO deep_copy is coyping some references, we need only values
-            #Think whenever there is a list that becomes a reference
-            other = G.deep_copy()
+            other = deepcopy(G)
             process(other)
             if copy.value:
                 G.copy(other)
@@ -220,7 +223,7 @@ def blocks(height, width, difficulty, complexity, seed):
 
     return G
 #--------------------------------------
-public_seed = 1140
+public_seed = 1153
 level = 1
 b = create(public_seed, level)
 

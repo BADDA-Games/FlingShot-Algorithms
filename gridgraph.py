@@ -76,26 +76,6 @@ class GridGraph:
         self.build((self.width // 2, 0),(self.width // 2, 0))
 
     """ PUBLIC """
-    def deep_copy(self):
-        """
-        Creates a deep copy of the current GridGraph data structure
-        """
-        other = GridGraph(self.width, self.height)
-        other.start = self.start
-        other.vertices = self.vertices
-        other.adj = self.adj
-        other.rev = self.rev
-        other.distance = self.distance
-        other.built_directions = self.built_directions
-        other.initial_built_direction = self.initial_built_direction
-        other.movable_directions = self.movable_directions
-        other.is_path = self.is_path
-        other.is_unused_path = self.is_unused_path
-        other.is_wall = self.is_wall
-        other.is_unused_wall = self.is_unused_wall
-        return other
-
-    """ PUBLIC """
     def copy(self, other):
         """
         Copies another GridGraph's information.
