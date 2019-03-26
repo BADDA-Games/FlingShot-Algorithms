@@ -68,10 +68,6 @@ def blocks(height, width, difficulty, complexity, seed):
     l = "L"
     r = "R"
 
-    def add(offset, direction, length):
-        index = offset*-1
-        v.append(G.build_path(v[index], direction, length))
-
     """ RESOURCES: RandomSeed (R), GridGraph (G), difficulty, complexity """
 
     """ RandomSeed USABLE AND USEFUL API
@@ -114,8 +110,9 @@ def blocks(height, width, difficulty, complexity, seed):
         up = g.is_wall[start[0]][start[1]-1]
         if not (left or right or up):
             return
-        valid.value = True
-        copy.value = True
+        if(g.complexity() >= G.complexity()):
+            valid.value = True
+            copy.value = True
 
     # Given a vertex v in the graph g, expand on it
     def try_build(g, v):
@@ -143,9 +140,6 @@ def blocks(height, width, difficulty, complexity, seed):
             if r in good:
                 good.remove(r)
         good = [x for x in good if x not in built]
-        if len(good) == 0:
-            return False
-        #TODO probably revise this weight function
         def weight_assignments(dir):
             weight = {
                 u: 3,
@@ -154,19 +148,27 @@ def blocks(height, width, difficulty, complexity, seed):
                 d: 1
             }
             return weight.get(dir, "Error - Invalid Direction")
-        ranges = util.tuple_ranges(weight_assignments, good)
-        choice = R.choose_from(ranges)
-        dir = good[choice]
         # If fail, try another direction before returning to parent function
-         #TODO change 1 to some general function for n
-        max_length = g.longest_path_n_walls(v, dir, 1)
-        length = R.generate(1, max_length)
-        # print "Building", v, dir, length
-        g.build_path(v, dir, length)
-        return True
+        while len(good) > 0:
+            ranges = util.tuple_ranges(weight_assignments, good)
+            choice = R.choose_from(ranges)
+            dir = good[choice]
+             #TODO change 1 to some general function for n
+            max_length = g.longest_path_n_walls(v, dir, 1)
+            if dir == d:
+                max_length = min(max_length, 4)
+            else:
+                max_length = min(max_length, 6)
+            length = R.generate(1, max_length)
+            # print "Building", v, dir, length
+            g.build_path(v, dir, length)
+            return True
+            #TODO figure this out
+        return False
 
     # Choose a vertex from our list and try to build on it
     def process(g):
+        print g.complexity()
         dists = g.distance
         valid.value = False
         while not valid.value:
@@ -191,36 +193,18 @@ def blocks(height, width, difficulty, complexity, seed):
     def iterate():
         loop_condition = False
         # while loop_condition:
-        for _ in range(20):
+        for _ in range(100):
             copy.value = False
             other = deepcopy(G)
             process(other)
             if copy.value:
                 G.copy(other)
 
-    #TODO if a vertex is missing, it is offset somehow by a path which destroyed
-    #it. It needs to be accounted before, or ensure it can never happen
-    # add(1, r, 4)
-    # add(1, u, 3)
-    # add(1, l, 2)
-    # add(1, u, 6)
-    # add(1, l, 4)
-    # add(1, d, 1)
-    # add(1, r, 2)
-    # add(1, u, 3)
-    # add(1, r, 2)
-    # add(1, u, 1)
-    # add(1, r, 1)
-    # add(1, u, 2)
-    # add(1, l, 3)
-    # add(14, u, 5)
-    # add(1, l, 4)
-    # add(1, u, 8)
-    # add(1, r, 5)
-
     iterate()
 
+    print G.possible()
     # G.determine_extra_paths(R)
+
 
     return G
 #--------------------------------------

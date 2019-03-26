@@ -1084,6 +1084,8 @@ class GridGraph:
                 if self.adj[i][j] != []:
                     m = m + 1
                     n = n + len(self.adj[i][j]) - 1
+        if n == 0:
+            return 0
         L = m*math.log(n**2/m) / math.log(n)
         return L
 
