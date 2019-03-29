@@ -168,13 +168,13 @@ def blocks(height, width, difficulty, complexity, seed):
 
     # Choose a vertex from our list and try to build on it
     def process(g):
-        print g.complexity()
+        # print g.complexity()
         dists = g.distance
         valid.value = False
         while not valid.value:
             # Determine which vertex to use
             if len(dists) == 0:
-                print "ERROR - No good vertices."
+                # print "ERROR - No good vertices."
                 return
             #TODO Better probability function? Use some GG methods!
             probabilities = map(lambda x: 1 + 2*x[1]**2, dists)
@@ -193,7 +193,7 @@ def blocks(height, width, difficulty, complexity, seed):
     def iterate():
         loop_condition = False
         # while loop_condition:
-        for _ in range(100):
+        for _ in range(60):
             copy.value = False
             other = deepcopy(G)
             process(other)
@@ -203,12 +203,12 @@ def blocks(height, width, difficulty, complexity, seed):
     iterate()
 
     print G.possible()
-    # G.determine_extra_paths(R)
+    G.determine_extra_paths(R)
 
 
     return G
 #--------------------------------------
-public_seed = 1154
+public_seed = 12345
 level = 1
 b = create(public_seed, level)
 
