@@ -79,6 +79,18 @@ namespace Algorithm
             return (smaller <= n) && (n <= larger);
         }
 
+        public static T2 Lookup<T1, T2>(T1 search, List<Tuple<T1, T2>> dict)
+        {
+            foreach(Tuple<T1, T2> t in dict)
+            {
+                if (search.Equals(t.Item1))
+                {
+                    return t.Item2;
+                }
+            }
+            return default(T2);
+        }
+
         //TODO please
         //public static List<Tuple<int, int>> TupleRanges()
     }

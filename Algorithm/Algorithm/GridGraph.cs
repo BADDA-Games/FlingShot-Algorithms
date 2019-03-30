@@ -188,7 +188,7 @@ namespace Algorithm
         /// <param name="p">A point in the GridGraph.</param>
         public int InDeg(Pair p)
         {
-            return -1;
+            return rev[p.Item1, p.Item2].Count;
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace Algorithm
         /// <param name="p">A point in the GridGraph.</param>
         public int OutDeg(Pair p)
         {
-            return -1;
+            return adj[p.Item1, p.Item2].Count;
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace Algorithm
         /// <param name="v">A vertex in the grid.</param>
         public int Depth(Pair v)
         {
-            return -1;
+            return Util.Lookup(v, distance);
         }
 
         /// <summary>
