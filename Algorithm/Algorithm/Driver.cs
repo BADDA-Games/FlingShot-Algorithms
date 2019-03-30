@@ -1,4 +1,5 @@
 ﻿using System;
+using Pair = System.Tuple<int, int>;
 
 namespace Algorithm
 {
@@ -11,7 +12,7 @@ namespace Algorithm
             //Console.WriteLine("Press any key to exit.");
             //List<int> list = new List<int>();
             //Util.AddIfMissing(null, null);
-            Tuple<int, int> x = Util.MinMax(3, 4);
+            Pair x = Util.MinMax(3, 4);
             Console.WriteLine(x.Item1+x.Item2);
             Console.ReadKey();
         }

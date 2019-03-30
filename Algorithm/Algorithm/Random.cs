@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using Pair = System.Tuple<int, int>;
+using PairList = System.Collections.Generic.List<System.Tuple<int, int>>;
+using Directions = System.Collections.Generic.List<System.Collections.Generic.List<System.Collections.Generic.List<char>>>;
+using Bools = System.Collections.Generic.List<System.Collections.Generic.List<bool>>;
 
 namespace Algorithm
 {
     public class Random
     {
-        int seed;
-        int InitialSeed { get; }
+        private int seed;
+        public int InitialSeed { get; }
 
         public Random(int seed)
         {
@@ -24,10 +28,11 @@ namespace Algorithm
             int value = (seed % mod) + low;
             return value;
         }
-        Tuple<int, int> ChooseFrom(List<Tuple<int, int>> ranges)
+
+        Pair ChooseFrom(PairList ranges)
         {
             int choice = Generate(ranges[0].Item1, ranges[ranges.Count-1].Item2);
-            foreach(Tuple<int, int> t in ranges)
+            foreach(Pair t in ranges)
             {
                 if(Util.Between(choice, t))
                 {

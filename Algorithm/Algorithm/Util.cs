@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Pair = System.Tuple<int, int>;
+using PairList = System.Collections.Generic.List<System.Tuple<int, int>>;
 
 namespace Algorithm
 {
@@ -18,7 +20,7 @@ namespace Algorithm
             return list;
         }
 
-        public static Tuple<int, int> MinMax(int v1, int v2)
+        public static Pair MinMax(int v1, int v2)
         {
             int smaller, larger;
             if (v1 <= v2)
@@ -34,7 +36,7 @@ namespace Algorithm
             return Tuple.Create(smaller, larger);
         }
 
-        public static Tuple<int, int> MinMax(Tuple<int, int> t)
+        public static Pair MinMax(Pair t)
         {
             int smaller, larger;
             if (t.Item1 <= t.Item2)
@@ -50,13 +52,13 @@ namespace Algorithm
             return Tuple.Create(smaller, larger);
         }
 
-        public static List<Tuple<int, int>> SortTuplesX(List<Tuple<int, int>> list)
+        public static PairList SortTuplesX(PairList list)
         {
             list.Sort((t1, t2) => t1.Item1.CompareTo(t2.Item1));
             return list;
         }
 
-        public static List<Tuple<int, int>> SortTuplesY(List<Tuple<int, int>> list)
+        public static PairList SortTuplesY(PairList list)
         {
             list.Sort((t1, t2) => t1.Item2.CompareTo(t2.Item2));
             return list;
@@ -67,9 +69,9 @@ namespace Algorithm
             return (int) n;
         }
 
-        public static bool Between(int n, Tuple<int, int> tuple)
+        public static bool Between(int n, Pair tuple)
         {
-            Tuple<int, int> sorted = MinMax(tuple);
+            Pair sorted = MinMax(tuple);
             int smaller = sorted.Item1;
             int larger = sorted.Item2;
             return (smaller <= n) && (n <= larger);

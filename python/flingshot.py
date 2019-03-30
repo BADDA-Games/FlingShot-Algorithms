@@ -205,6 +205,7 @@ def blocks(height, width, difficulty, complexity, seed):
     print G.possible()
     G.determine_extra_paths(R)
 
+    print G.built_directions
 
     return G
 #--------------------------------------
