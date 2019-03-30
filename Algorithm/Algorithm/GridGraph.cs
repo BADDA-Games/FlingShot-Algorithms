@@ -29,7 +29,7 @@ namespace Algorithm
         {
             Width = width;
             Height = height;
-            start = Tuple.Create(width/2, height-1);
+            start = Tuple.Create(Width / 2, Height - 1);
             InitialBuiltDirections = new char[width, height];
             MovableDirections = new Directions[width, height];
             BuiltDirections = new Directions[width, height];
@@ -57,17 +57,70 @@ namespace Algorithm
                 }
             }
             // TODO build initial spots
+            is_path[start.Item1, start.Item2] = true;
+            is_wall[start.Item1 - 1, start.Item2] = true;
+            is_wall[start.Item1 + 1, start.Item2] = true;
+            is_wall[start.Item1, start.Item2 - 1] = true;
         }
 
         /// <summary>
-        /// Copies information from another GridGraph information.
+        /// Constructor which copies information from another GridGraph.
         /// </summary>
-        /// <param name="other">Other.</param>
-        public void Copy(GridGraph other)
+        /// <param name="other">The other GridGraph instance</param>
+        public GridGraph(GridGraph other)
         {
+            Width = other.Width;
+            Height = other.Height;
+            start = Tuple.Create(Width / 2, Height - 1);
+            InitialBuiltDirections = new char[Width, Height];
+            MovableDirections = new Directions[Width, Height];
+            BuiltDirections = new Directions[Width, Height];
+            vertices = new PairList();
+            distance = new List<Tuple<Pair, int>>();
+            adj = new PairList[Width, Height];
+            rev = new PairList[Width, Height];
+            is_path = new bool[Width, Height];
+            is_unused_path = new bool[Width, Height];
+            is_wall = new bool[Width, Height];
+            is_unused_wall = new bool[Width, Height];
+            for (int i = 0; i < Width; i++)
+            {
+                for (int j = 0; j < Height; j++)
+                {
+                    adj[i, j] = new PairList();
+                    rev[i, j] = new PairList();
+                    BuiltDirections[i, j] = new List<char>();
+                    MovableDirections[i, j] = new List<char>();
 
+                    InitialBuiltDirections[i, j] = other.InitialBuiltDirections[i, j];
+                    is_path[i, j] = other.is_path[i, j];
+                    is_unused_path[i, j] = other.is_unused_path[i, j];
+                    is_wall[i, j] = other.is_wall[i, j];
+                    is_unused_wall[i, j] = other.is_unused_wall[i, j];
+
+                    foreach(char c in other.BuiltDirections[i, j])
+                    {
+                        BuiltDirections[i, j].Add(c);
+                    }
+                    foreach (char c in other.MovableDirections[i, j])
+                    {
+                        MovableDirections[i, j].Add(c);
+                    }
+                    foreach(Pair p in other.adj[i, j])
+                    {
+                        adj[i, j].Add(new Tuple<int, int>(p.Item1, p.Item2));
+                    }
+                    foreach (Pair p in other.rev[i, j])
+                    {
+                        rev[i, j].Add(new Tuple<int, int>(p.Item1, p.Item2));
+                    }
+                }
+            }
         }
 
+        /// <summary>
+        /// Prints out a debug version of the current Grid structure.
+        /// </summary>
         public void DebugArray()
         {
             string[,] arr = new string[Width, Height];
@@ -110,6 +163,10 @@ namespace Algorithm
             Console.ForegroundColor = ConsoleColor.White;
         }
 
+        /// <summary>
+        /// Outputs the current grid structure, 0 = Wall, 1 = Path
+        /// </summary>
+        /// <returns>The cell array.</returns>
         public int[,] GetCellArray()
         {
             int[,] arr = new int[Width, Height];
@@ -117,7 +174,7 @@ namespace Algorithm
             {
                 for(int j=0; j<Height; j++)
                 {
-                    arr[i, j] = is_path[i, j] == true ? 0 : 1;
+                    arr[i, j] = is_path[i, j] == true ? 1 : 0;
                 }
             }
             return arr;

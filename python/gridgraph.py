@@ -884,7 +884,7 @@ class GridGraph:
             for j in range(ranges[i][1]+1, self.width):
                 if not self.is_wall[i][j]:
                     self.is_wall[i][j] = True
-                    self.is_unused_wall[j][i] = True
+                    self.is_unused_wall[i][j] = True
 
     """ PRIVATE """
     def row_interval_assignment(self, ranges):
