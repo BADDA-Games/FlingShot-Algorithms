@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using Pair = System.Tuple<int, int>;
 using PairList = System.Collections.Generic.List<System.Tuple<int, int>>;
-using Directions = System.Collections.Generic.List<System.Collections.Generic.List<System.Collections.Generic.List<char>>>;
-using Bools = System.Collections.Generic.List<System.Collections.Generic.List<bool>>;
+using Directions = System.Collections.Generic.List<char>;
 
 namespace Algorithm
 {
@@ -12,42 +11,52 @@ namespace Algorithm
         public int Width { get; }
         public int Height { get; }
 
-        Directions InitialBuiltDirections { get; }
-        Directions MovableDirections { get; }
+        char[,] InitialBuiltDirections { get; }
+        Directions[,] BuiltDirections { get; }
+        Directions[,] MovableDirections { get; }
 
         PairList vertices;
         List<Tuple<Pair, int>> distance;
         Pair start;
-        List<List<PairList>> adj;
-        List<List<PairList>> rev;
-        Bools is_path;
-        Bools is_unused_path;
-        Bools is_wall;
-        Bools is_unused_wall;
+        PairList[,] adj;
+        PairList[,] rev;
+        bool[,] is_path;
+        bool[,] is_unused_path;
+        bool[,] is_wall;
+        bool[,] is_unused_wall;
 
         public GridGraph(int width, int height)
         {
-            //TODO initialize!
             Width = width;
             Height = height;
             start = Tuple.Create(width/2, height-1);
-            InitialBuiltDirections = new Directions();
-            MovableDirections = new Directions();
+            InitialBuiltDirections = new char[width, height];
+            MovableDirections = new Directions[width, height];
+            BuiltDirections = new Directions[width, height];
             vertices = new PairList();
             distance = new List<Tuple<Pair, int>>();
-            adj = new List<List<PairList>>();
-            rev = new List<List<PairList>>();
-            is_path = new Bools();
-            is_unused_path = new Bools();
-            is_wall = new Bools();
-            is_unused_wall = new Bools();
-            for(int i=0; i<width; i++)
+            adj = new PairList[width, height];
+            rev = new PairList[width, height];
+            is_path = new bool[width, height];
+            is_unused_path = new bool[width, height];
+            is_wall = new bool[width, height];
+            is_unused_wall = new bool[width, height];
+            for (int i=0; i<width; i++)
             {
                 for(int j=0; j<height; j++)
                 {
-
+                    adj[i, j] = new PairList();
+                    rev[i, j] = new PairList();
+                    InitialBuiltDirections[i, j] = '\0';
+                    BuiltDirections[i, j] = new List<char>();
+                    MovableDirections[i, j] = new List<char>();
+                    is_path[i,j] = false;
+                    is_unused_path[i, j] = false;
+                    is_wall[i, j] = false;
+                    is_unused_wall[i, j] = false;
                 }
             }
+            // TODO build initial spots
         }
 
         /// <summary>

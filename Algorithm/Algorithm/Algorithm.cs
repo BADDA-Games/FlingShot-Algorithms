@@ -8,27 +8,46 @@ namespace Algorithm
 {
     public class Algorithm
     {
+        // Initial seed, not current seed!
+        public int Seed { get; }
+        public int Level { get; set; }
+
         private int height;
         private int width;
-        Random rand;
+        private GridGraph gg;
+        private Random rand;
 
         public Algorithm()
         {
             System.Random sysrand = new System.Random();
-            int seed = sysrand.Next(1, 99999989);
-            Initialize(seed);
+            Seed = sysrand.Next(1, 99999989);
+            Initialize();
         }
 
         public Algorithm(int seed)
         {
-            Initialize(seed);
+            Seed = seed;
+            Initialize();
         }
 
-        private void Initialize(int seed)
+        private void Initialize()
         {
             height = 16;
             width = 9;
-            rand = new Random(seed);
+            Level = 1;
+            rand = new Random(Seed);
+        }
+
+        public void Generate()
+        {
+            gg = new GridGraph(width, height);
+            Build();
+            Level++;
+        }
+
+        private void Build()
+        {
+
         }
     }
 }

@@ -1,5 +1,8 @@
 ﻿using System;
 using Pair = System.Tuple<int, int>;
+using PairList = System.Collections.Generic.List<System.Tuple<int, int>>;
+using Directions = System.Collections.Generic.List<System.Collections.Generic.List<System.Collections.Generic.List<char>>>;
+using Bools = System.Collections.Generic.List<System.Collections.Generic.List<bool>>;
 
 namespace Algorithm
 {
@@ -7,14 +10,11 @@ namespace Algorithm
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-
-            //Console.WriteLine("Press any key to exit.");
-            //List<int> list = new List<int>();
-            //Util.AddIfMissing(null, null);
-            Pair x = Util.MinMax(3, 4);
-            Console.WriteLine(x.Item1+x.Item2);
-            Console.ReadKey();
+            Algorithm generator = new Algorithm(12345);
+            generator.Generate();
+            int seed = generator.Seed;
+            int level = generator.Level;
+            Console.WriteLine(seed + level);
         }
     }
 }
