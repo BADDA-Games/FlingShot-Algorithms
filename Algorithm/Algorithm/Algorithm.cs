@@ -47,7 +47,8 @@ namespace Algorithm
 
         private void Build()
         {
-
+            gg.DebugArray();
+            //Printer.PrintGridGraph(gg);
         }
     }
 }

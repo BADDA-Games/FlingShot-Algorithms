@@ -8,8 +8,17 @@ namespace Algorithm
 {
     public class Printer
     {
-        public Printer()
+        public static void PrintGridGraph(GridGraph gg)
         {
+            int[,] nums = gg.GetCellArray();
+            for(int i=0; i<gg.Height; i++)
+            {
+                for(int j=0; j<gg.Width; j++)
+                {
+                    Console.Write(nums[j, i]+" ");
+                }
+                Console.WriteLine();
+            }
         }
     }
 }

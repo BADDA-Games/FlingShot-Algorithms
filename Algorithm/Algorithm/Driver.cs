@@ -12,9 +12,6 @@ namespace Algorithm
         {
             Algorithm generator = new Algorithm(12345);
             generator.Generate();
-            int seed = generator.Seed;
-            int level = generator.Level;
-            Console.WriteLine(seed + level);
         }
     }
 }

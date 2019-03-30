@@ -68,6 +68,61 @@ namespace Algorithm
 
         }
 
+        public void DebugArray()
+        {
+            string[,] arr = new string[Width, Height];
+            for(int i=0; i<Height; i++)
+            {
+                for(int j=0; j<Width; j++)
+                {
+                    string cur = is_path[j, i] ? "O" : "X";
+                    if(cur == "O")
+                    {
+                        if(!is_unused_path[j, i])
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkGray;
+                        }
+                    }
+                    else if(cur == "X" && is_wall[j, i])
+                    {
+                        if(!is_unused_wall[j, i])
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkGray;
+                        }
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+
+                    Console.Write(cur + " ");
+                }
+                Console.WriteLine();
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public int[,] GetCellArray()
+        {
+            int[,] arr = new int[Width, Height];
+            for(int i=0; i<Width; i++)
+            {
+                for(int j=0; j<Height; j++)
+                {
+                    arr[i, j] = is_path[i, j] == true ? 0 : 1;
+                }
+            }
+            return arr;
+        }
+
         /// <summary>
         /// Finds the in-degree of p, the number of vertices which can
         /// move to p in one move.
