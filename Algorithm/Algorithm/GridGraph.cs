@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Pair = System.Tuple<int, int>;
 using PairList = System.Collections.Generic.List<System.Tuple<int, int>>;
@@ -405,9 +406,22 @@ namespace Algorithm
         /// <param name="f">The vertex to move from.</param>
         /// <param name="direction">The direction to move in.</param>
         /// <param name="walls">Number of walls to walk through.</param>
-        public int LongestPath(Pair f, char direction, uint walls)
+        public int LongestPath(Pair f, char direction, int walls)
         {
-            return -1;
+            Pair end = MoveThroughWalls(f, direction, walls);
+            switch (direction)
+            {
+                case 'R':
+                    return end.Item1 - f.Item1;
+                case 'L':
+                    return f.Item1 - end.Item1;
+                case 'U':
+                    return f.Item2 - end.Item2;
+                case 'D':
+                    return end.Item2 - f.Item2;
+                default:
+                    return -1;
+            }
         }
 
         /// <summary>
@@ -418,7 +432,24 @@ namespace Algorithm
         /// <returns>A floating point approximation of the complexity.</returns>
         public float Complexity()
         {
-            return (float) -1.0;
+            int m = 0, n = 0;
+            for(int i = 0; i < Width; i++)
+            {
+                for(int j=0; j < Width; j++)
+                {
+                    if(adj[i, j].Count > 0)
+                    {
+                        m++;
+                        n += adj[i, j].Count - 1;
+                    }
+                }
+            }
+            if(n == 0)
+            {
+                return 0;
+            }
+            double L = m * Math.Log(n * n / m) / Math.Log(n);
+            return (float)L;
         }
 
         /// <summary>
@@ -440,7 +471,38 @@ namespace Algorithm
         /// <param name="direction">A direction character from [U, D, L, R].</param>
         public PairList VerticesInDirection(Pair p, char direction)
         {
-            return null;
+            PairList ls = new PairList();
+            if(direction == 'U' || direction == 'D')
+            {
+                PairList x = VerticesX(p.Item1);
+                if(direction == 'U')
+                {
+                    ls = x.Where(e => e.Item2 < p.Item2).ToList();
+                    ls = Util.SortTuplesX(ls);
+                    ls.Reverse();
+                }
+                else
+                {
+                    ls = x.Where(e => e.Item2 > p.Item2).ToList();
+                    ls = Util.SortTuplesX(ls);
+                }
+            }
+            else if(direction == 'L' || direction == 'R')
+            {
+                PairList y = VerticesY(p.Item2);
+                if(direction == 'L')
+                {
+                    ls = y.Where(e => e.Item1 < p.Item1).ToList();
+                    ls = Util.SortTuplesY(ls);
+                    ls.Reverse();
+                }
+                else
+                {
+                    ls = y.Where(e => e.Item1 > p.Item1).ToList();
+                    ls = Util.SortTuplesY(ls);
+                }
+            }
+            return ls;
         }
 
         /// <summary>
@@ -728,6 +790,110 @@ namespace Algorithm
                 {
                     while(y+1 < Height && is_path[x, y + 1])
                     {
+                        y++;
+                    }
+                    return new Pair(x, y);
+                }
+                return null; // bad direction
+            }
+            return null;
+        }
+
+        private Pair MoveThroughWalls(Pair f, char direction, int n)
+        {
+            if (IsInGrid(f))
+            {
+                int x = f.Item1;
+                int y = f.Item2;
+                int walls = n;
+                if(!is_path[x, y])
+                {
+                    return null;
+                }
+                if(direction == 'R')
+                {
+                    while(x+1 < Width)
+                    {
+                        if(!is_path[x + 1, y])
+                        {
+                            if(is_wall[x + 1, y])
+                            {
+                                if(walls > 0)
+                                {
+                                    walls--;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        x++;
+                    }
+                    return new Pair(x, y);
+                }
+                if(direction == 'L')
+                {
+                    while (x - 1 >= 0)
+                    {
+                        if (!is_path[x - 1, y])
+                        {
+                            if (is_wall[x - 1, y])
+                            {
+                                if (walls > 0)
+                                {
+                                    walls--;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        x--;
+                    }
+                    return new Pair(x, y);
+                }
+                if(direction == 'U')
+                {
+                    while (y - 1 >= 0)
+                    {
+                        if (!is_path[x, y - 1])
+                        {
+                            if (is_wall[x, y - 1])
+                            {
+                                if (walls > 0)
+                                {
+                                    walls--;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        y--;
+                    }
+                    return new Pair(x, y);
+                }
+                if(direction == 'D')
+                {
+                    while (y + 1 < Height)
+                    {
+                        if (!is_path[x, y + 1])
+                        {
+                            if (is_wall[x, y + 1])
+                            {
+                                if (walls > 0)
+                                {
+                                    walls--;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                        }
                         y++;
                     }
                     return new Pair(x, y);
