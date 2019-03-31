@@ -10,6 +10,7 @@ namespace Algorithm
     {
         public int Width { get; }
         public int Height { get; }
+        public Pair Start { get; }
 
         char[,] InitialBuiltDirections { get; }
         Directions[,] BuiltDirections { get; }
@@ -17,7 +18,6 @@ namespace Algorithm
 
         PairList vertices;
         List<Tuple<Pair, int>> distance;
-        Pair start;
         PairList[,] adj;
         PairList[,] rev;
         bool[,] is_path;
@@ -34,7 +34,7 @@ namespace Algorithm
         {
             Width = width;
             Height = height;
-            start = Tuple.Create(Width / 2, Height - 1);
+            Start = Tuple.Create(Width / 2, Height - 1);
             InitialBuiltDirections = new char[width, height];
             MovableDirections = new Directions[width, height];
             BuiltDirections = new Directions[width, height];
@@ -61,11 +61,8 @@ namespace Algorithm
                     is_unused_wall[i, j] = false;
                 }
             }
-            // TODO build initial spots
-            is_path[start.Item1, start.Item2] = true;
-            is_wall[start.Item1 - 1, start.Item2] = true;
-            is_wall[start.Item1 + 1, start.Item2] = true;
-            is_wall[start.Item1, start.Item2 - 1] = true;
+            Build(Start, Start);
+            Build(new Pair(Width / 2, 0), new Pair(Width / 2, 0));
         }
 
         /// <summary>
@@ -76,7 +73,7 @@ namespace Algorithm
         {
             Width = other.Width;
             Height = other.Height;
-            start = Tuple.Create(Width / 2, Height - 1);
+            Start = Tuple.Create(Width / 2, Height - 1);
             InitialBuiltDirections = new char[Width, Height];
             MovableDirections = new Directions[Width, Height];
             BuiltDirections = new Directions[Width, Height];
@@ -231,7 +228,7 @@ namespace Algorithm
             {
                 if(direction == 'R')
                 {
-                    if(f.Item1 + length >= Width)
+                    if (f.Item1 + length >= Width)
                     {
                         return Build(f, new Pair(Width - 1, f.Item2));
                     }
@@ -503,7 +500,7 @@ namespace Algorithm
         private void Traverse()
         {
             ResetLists();
-            BFS(start);
+            BFS(Start);
             MarkWalls();
             UpdateMovableDirections();
         }
@@ -530,11 +527,11 @@ namespace Algorithm
 
         private void BFS(Pair s)
         {
-            distance.Add(Tuple.Create(start, 0));
+            distance.Add(Tuple.Create(Start, 0));
             PairList queue = new PairList();
-            queue.Add(start);
+            queue.Add(Start);
             PairList seen = new PairList();
-            seen.Add(start);
+            seen.Add(Start);
             PairList visited = new PairList();
             BFSRecursive(queue, seen, visited);
         }
@@ -608,6 +605,9 @@ namespace Algorithm
                         distance.Add(Tuple.Create(d, dist + 1));
                     }
                 }
+                v.Add(curr);
+                q.RemoveAt(0);
+                BFSRecursive(q, s, v);
             }
             else{
                 vertices = visited;
@@ -673,6 +673,7 @@ namespace Algorithm
 
         private void MarkWalls()
         {
+            Console.WriteLine(vertices.Count);
             foreach(Pair p in vertices)
             {
                 MarkWalls(p);
@@ -681,6 +682,7 @@ namespace Algorithm
 
         private void MarkWalls(Pair p)
         {
+            Console.WriteLine("Hello!");
             int x = p.Item1;
             int y = p.Item2;
             Pair l = new Pair(x - 1, y);

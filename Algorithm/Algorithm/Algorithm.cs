@@ -47,6 +47,9 @@ namespace Algorithm
 
         private void Build()
         {
+            gg.BuildPath(gg.Start, 'R', 3);
+            gg.BuildPath(new Pair(7, 15), 'U', 3);
+            gg.BuildPath(new Pair(7, 12), 'L', 3);
             gg.DebugArray();
             //Printer.PrintGridGraph(gg);
         }
