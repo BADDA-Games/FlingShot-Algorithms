@@ -269,7 +269,7 @@ namespace Algorithm
         /// <returns>True if possible, false otherwise</returns>
         public bool Possible()
         {
-            return false;
+            return FastestPath() != -1;
         }
 
         /// <summary>
@@ -279,7 +279,15 @@ namespace Algorithm
         /// <returns>The vertices.</returns>
         public PairList TrapVertices()
         {
-            return null;
+            PairList traps = new PairList();
+            foreach(Pair v in vertices)
+            {
+                if (!PossibleFromLocation(v))
+                {
+                    traps.Add(v);
+                }
+            }
+            return traps;
         }
 
         /// <summary>
@@ -289,6 +297,13 @@ namespace Algorithm
         /// <returns><c>true</c>true if trap vertices exist, false otherwise.<c>false</c> otherwise.</returns>
         public bool CanGetStuck()
         {
+            foreach(Pair v in vertices)
+            {
+                if (!PossibleFromLocation(v))
+                {
+                    return true;
+                }
+            }
             return false;
         }
 
@@ -300,26 +315,7 @@ namespace Algorithm
         /// <returns>The length of the path.</returns>
         public int FastestPath()
         {
-            int x = Width / 2;
-            int y = 0;
-            for(int i = 0; i < Height; i++)
-            {
-                if(!is_path[x, i])
-                {
-                    y = i - 1;
-                    break;
-                }
-            }
-            PairList v = VerticesX(x);
-            PairList list = new PairList();
-            foreach(Pair p in v)
-            {
-                if(p.Item2 <= y)
-                {
-                    list.Add(p);
-                }
-            }
-            return ShortestPaths(Start, list);
+            return FastestPathFrom(Start);
         }
 
         /// <summary>
@@ -331,7 +327,26 @@ namespace Algorithm
         /// <param name="p">A vertex in the GridGraph.</param>
         public int FastestPathFrom(Pair p)
         {
-            return -1;
+            int x = Width / 2;
+            int y = 0;
+            for (int i = 0; i < Height; i++)
+            {
+                if (!is_path[x, i])
+                {
+                    y = i - 1;
+                    break;
+                }
+            }
+            PairList v = VerticesX(x);
+            PairList list = new PairList();
+            foreach (Pair i in v)
+            {
+                if (i.Item2 <= y)
+                {
+                    list.Add(i);
+                }
+            }
+            return ShortestPaths(p, list);
         }
 
         /// <summary>
@@ -751,19 +766,19 @@ namespace Algorithm
                 Pair right = new Pair(x, y - 1); 
                 if (IsInGrid(up) && is_path[up.Item1, up.Item2])
                 {
-                    is_wall[up.Item1, up.Item2] = true;
+                    MovableDirections[v.Item1, v.Item2].Add('U');
                 }
                 if (IsInGrid(down) && is_path[down.Item1, down.Item2])
                 {
-                    is_wall[down.Item1, down.Item2] = true;
+                    MovableDirections[v.Item1, v.Item2].Add('D');
                 }
                 if (IsInGrid(left) && is_path[left.Item1, left.Item2])
                 {
-                    is_wall[left.Item1, left.Item2] = true;
+                    MovableDirections[v.Item1, v.Item2].Add('L');
                 }
                 if (IsInGrid(right) && is_path[right.Item1, right.Item2])
                 {
-                    is_wall[right.Item1, right.Item2] = true;
+                    MovableDirections[v.Item1, v.Item2].Add('R');
                 }
             }
         }
@@ -835,6 +850,15 @@ namespace Algorithm
                 return -1;
             }
             return -1;
+        }
+
+        private bool PossibleFromLocation(Pair p)
+        {
+            if (!IsInGrid(p))
+            {
+                return false;
+            }
+            return FastestPathFrom(p) != -1;
         }
     }
 }
