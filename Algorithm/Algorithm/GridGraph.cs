@@ -13,7 +13,7 @@ namespace Algorithm
 
         char[,] InitialBuiltDirections { get; }
         Directions[,] BuiltDirections { get; }
-        Directions[,] MovableDirections { get; }
+        Directions[,] MovableDirections { get; set; }
 
         PairList vertices;
         List<Tuple<Pair, int>> distance;
@@ -25,6 +25,11 @@ namespace Algorithm
         bool[,] is_wall;
         bool[,] is_unused_wall;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:Algorithm.GridGraph"/> class.
+        /// </summary>
+        /// <param name="width">The width of the grid.</param>
+        /// <param name="height">The height of the grid.</param>
         public GridGraph(int width, int height)
         {
             Width = width;
@@ -41,9 +46,9 @@ namespace Algorithm
             is_unused_path = new bool[width, height];
             is_wall = new bool[width, height];
             is_unused_wall = new bool[width, height];
-            for (int i=0; i<width; i++)
+            for (int i = 0; i < width; i++)
             {
-                for(int j=0; j<height; j++)
+                for(int j =0 ; j < height; j++)
                 {
                     adj[i, j] = new PairList();
                     rev[i, j] = new PairList();
@@ -220,9 +225,44 @@ namespace Algorithm
         /// <param name="f">A cell to start at</param>
         /// <param name="direction">The direction to move in.</param>
         /// <param name="length">The length of the path.</param>
-        public void BuildPath(Pair f, char direction, int length)
+        public Pair BuildPath(Pair f, char direction, int length)
         {
-
+            if(length > 0 && IsInGrid(f))
+            {
+                if(direction == 'R')
+                {
+                    if(f.Item1 + length >= Width)
+                    {
+                        return Build(f, new Pair(Width - 1, f.Item2));
+                    }
+                    return Build(f, new Pair(f.Item1 + length, f.Item2));
+                }
+                if (direction == 'L')
+                {
+                    if(f.Item1 - length < 0)
+                    {
+                        return Build(f, new Pair(0, f.Item2));
+                    }
+                    return Build(f, new Pair(f.Item1 - length, f.Item2));
+                }
+                if (direction == 'U')
+                {
+                    if(f.Item2 - length < 0)
+                    {
+                        return Build(f, new Pair(f.Item1, 0));
+                    }
+                    return Build(f, new Pair(f.Item1, f.Item2 - length));
+                }
+                if (direction == 'D')
+                {
+                    if(f.Item2 + length >= Height)
+                    {
+                        return Build(f, new Pair(f.Item1, Height - 1));
+                    }
+                    return Build(f, new Pair(f.Item1, f.Item2 + length));
+                }
+            }
+            return f;
         }
 
         /// <summary>
@@ -354,6 +394,344 @@ namespace Algorithm
         public List<char> PotentialDirections(Pair p)
         {
             return null;
+        }
+
+        private bool IsInGrid(Pair p)
+        {
+            return IsInGrid(p.Item1, p.Item2);
+        }
+
+        private bool IsInGrid(int x, int y)
+        {
+            return 0 <= x && x < Width && 0 <= y && y < Height;
+        }
+
+        private Pair Build(Pair f, Pair t)
+        {
+            AddEdge(f, t);
+            char dir = PathOrientation(f, t);
+            if (dir == 'H')
+            {
+                if(f.Item1 > t.Item1) // Going left
+                {
+                    BuiltDirections[f.Item1, f.Item2] = Util.AddIfMissing('L', BuiltDirections[f.Item1, f.Item2]);
+                    BuiltDirections[t.Item1, t.Item2] = Util.AddIfMissing('R', BuiltDirections[f.Item1, f.Item2]);
+                    for(int i = t.Item1 + 1; i < f.Item1; i++)
+                    {
+                        BuiltDirections[i, f.Item2] = Util.AddIfMissing('L', BuiltDirections[i, f.Item2]);
+                        BuiltDirections[i, f.Item2] = Util.AddIfMissing('R', BuiltDirections[i, f.Item2]);
+                    }
+                    InitialBuiltDirections[t.Item1, t.Item2] = 'R';
+                }
+                else // Right
+                {
+                    BuiltDirections[f.Item1, f.Item2] = Util.AddIfMissing('R', BuiltDirections[f.Item1, f.Item2]);
+                    BuiltDirections[t.Item1, t.Item2] = Util.AddIfMissing('L', BuiltDirections[f.Item1, f.Item2]);
+                    for (int i = f.Item1 + 1; i < t.Item1; i++)
+                    {
+                        BuiltDirections[i, f.Item2] = Util.AddIfMissing('L', BuiltDirections[i, f.Item2]);
+                        BuiltDirections[i, f.Item2] = Util.AddIfMissing('R', BuiltDirections[i, f.Item2]);
+                    }
+                    InitialBuiltDirections[t.Item1, t.Item2] = 'L';
+                }
+            }
+            else
+            {
+                if(f.Item2 > t.Item2) // Down
+                {
+                    BuiltDirections[f.Item1, f.Item2] = Util.AddIfMissing('U', BuiltDirections[f.Item1, f.Item2]);
+                    BuiltDirections[t.Item1, t.Item2] = Util.AddIfMissing('D', BuiltDirections[f.Item1, f.Item2]);
+                    for(int i = t.Item2 + 1; i < f.Item2; i++)
+                    {
+                        BuiltDirections[f.Item1, i] = Util.AddIfMissing('U', BuiltDirections[f.Item1, i]);
+                        BuiltDirections[f.Item1, i] = Util.AddIfMissing('D', BuiltDirections[f.Item1, i]);
+                    }
+                    InitialBuiltDirections[t.Item1, t.Item2] = 'D';
+                }
+                else
+                {
+                    BuiltDirections[f.Item1, f.Item2] = Util.AddIfMissing('D', BuiltDirections[f.Item1, f.Item2]);
+                    BuiltDirections[t.Item1, t.Item2] = Util.AddIfMissing('U', BuiltDirections[f.Item1, f.Item2]);
+                    for (int i = f.Item2 + 1; i < t.Item2; i++)
+                    {
+                        BuiltDirections[f.Item1, i] = Util.AddIfMissing('U', BuiltDirections[f.Item1, i]);
+                        BuiltDirections[f.Item1, i] = Util.AddIfMissing('D', BuiltDirections[f.Item1, i]);
+                    }
+                    InitialBuiltDirections[t.Item1, t.Item2] = 'U';
+                }
+
+            }
+            Traverse();
+            return t;
+        }
+
+        private void AddEdge(Pair f, Pair t)
+        {
+            char type = PathOrientation(f, t);
+            if(type != 'N')
+            {
+                if(type == 'V' || type == 'P')
+                {
+                    int current = Math.Min(f.Item2, t.Item2);
+                    while(current - 1 < f.Item2 || current - 1 < t.Item2)
+                    {
+                        is_path[f.Item1, current] = true;
+                        current++;
+                    }
+                }
+                else
+                {
+                    int current = Math.Min(f.Item1, t.Item1);
+                    while (current - 1 < f.Item1 || current - 1 < t.Item1)
+                    {
+                        is_path[current, f.Item2] = true;
+                        current++;
+                    }
+                }
+            }
+        }
+
+        private char PathOrientation(Pair f, Pair t)
+        {
+            if(f.Item1 == t.Item1) // Same x values
+            {
+                return f.Item2 == t.Item2 ? 'P' : 'V';
+            }
+            return f.Item2 == t.Item2 ? 'H' : 'N';
+        }
+
+        private void Traverse()
+        {
+            ResetLists();
+            BFS(start);
+            MarkWalls();
+            UpdateMovableDirections();
+        }
+
+        private void ResetLists()
+        {
+            adj = new PairList[Width, Height];
+            rev = new PairList[Width, Height];
+            is_wall = new bool[Width, Height];
+            vertices = new PairList();
+            distance = new List<Tuple<Pair, int>>();
+            MovableDirections = new Directions[Width, Height];
+            for(int i = 0; i < Width; i++)
+            {
+                for(int j = 0; j < Height; j++)
+                {
+                    adj[i, j] = new PairList();
+                    rev[i, j] = new PairList();
+                    is_wall[i, j] = false;
+                    MovableDirections[i, j] = new List<char>();
+                }
+            }
+        }
+
+        private void BFS(Pair s)
+        {
+            distance.Add(Tuple.Create(start, 0));
+            PairList queue = new PairList();
+            queue.Add(start);
+            PairList seen = new PairList();
+            seen.Add(start);
+            PairList visited = new PairList();
+            BFSRecursive(queue, seen, visited);
+        }
+
+        private void BFSRecursive(PairList queue, PairList seen, PairList visited)
+        {
+            PairList q = new PairList();
+            PairList s = new PairList();
+            PairList v = new PairList();
+            foreach(Pair p in queue){
+                q.Add(p);
+            }
+            foreach(Pair p in seen){
+                s.Add(p);
+            }
+            foreach(Pair p in visited){
+                v.Add(p);
+            }
+            if(q.Count > 0)
+            {
+                Pair curr = q[0];
+                int dist = Util.Lookup(curr, distance);
+                Pair l = Move(curr, 'L');
+                Pair r = Move(curr, 'R');
+                Pair u = Move(curr, 'U');
+                Pair d = Move(curr, 'D');
+                if(l != null)
+                {
+                    if(!v.Contains(l))
+                    {
+                        q = Util.AddIfMissing(l, q);
+                    }
+                    if (!s.Contains(l)){
+                        s.Add(l);
+                        distance.Add(Tuple.Create(l, dist + 1));
+                    }
+                }
+                if(r != null)
+                {
+                    if (!v.Contains(r))
+                    {
+                        q = Util.AddIfMissing(r, q);
+                    }
+                    if (!s.Contains(r))
+                    {
+                        s.Add(r);
+                        distance.Add(Tuple.Create(r, dist + 1));
+                    }
+                }
+                if(u != null)
+                {
+                    if (!v.Contains(u))
+                    {
+                        q = Util.AddIfMissing(u, q);
+                    }
+                    if (!s.Contains(u))
+                    {
+                        s.Add(u);
+                        distance.Add(Tuple.Create(u, dist + 1));
+                    }
+                }
+                if(d != null)
+                {
+                    if (!v.Contains(d))
+                    {
+                        q = Util.AddIfMissing(d, q);
+                    }
+                    if (!s.Contains(d))
+                    {
+                        s.Add(d);
+                        distance.Add(Tuple.Create(d, dist + 1));
+                    }
+                }
+            }
+            else{
+                vertices = visited;
+            }
+        }
+
+        private Pair Move(Pair f, char direction)
+        {
+            if (IsInGrid(f))
+            {
+                int x = f.Item1;
+                int y = f.Item2;
+                if(!is_path[x, y])
+                {
+                    return null;
+                }
+                if(direction == 'R')
+                {
+                    while(x+1 < Width && is_path[x + 1, y])
+                    {
+                        x++;
+                    }
+                    return new Pair(x, y);
+                }
+                if(direction == 'L')
+                {
+                    while(x-1 >= 0 && is_path[x - 1, y])
+                    {
+                        x--;
+                    }
+                    return new Pair(x, y);
+                }
+                if(direction == 'U')
+                {
+                    while(y-1 >=0 && is_path[x, y - 1])
+                    {
+                        y--;
+                    }
+                    return new Pair(x, y);
+                }
+                if(direction == 'D')
+                {
+                    while(y+1 < Height && is_path[x, y + 1])
+                    {
+                        y++;
+                    }
+                    return new Pair(x, y);
+                }
+                return null; // bad direction
+            }
+            return null;
+        }
+
+        private void AddToLists(Pair f, Pair t)
+        {
+            int f0 = f.Item1;
+            int f1 = f.Item2;
+            int t0 = t.Item1;
+            int t1 = t.Item2;
+            adj[f0, f1] = Util.AddIfMissing(t, adj[f0, f1]);
+            rev[t0, t1] = Util.AddIfMissing(f, rev[t0, t1]);
+        }
+
+        private void MarkWalls()
+        {
+            foreach(Pair p in vertices)
+            {
+                MarkWalls(p);
+            }
+        }
+
+        private void MarkWalls(Pair p)
+        {
+            int x = p.Item1;
+            int y = p.Item2;
+            Pair l = new Pair(x - 1, y);
+            Pair r = new Pair(x + 1, y);
+            Pair u = new Pair(x, y - 1);
+            Pair d = new Pair(x, y + 1);
+            if(IsInGrid(l) && !is_path[l.Item1, l.Item2])
+            {
+                is_wall[l.Item1, l.Item2] = true;
+            }
+            if (IsInGrid(r) && !is_path[r.Item1, r.Item2])
+            {
+                is_wall[r.Item1, r.Item2] = true;
+            }
+            if (IsInGrid(u) && !is_path[u.Item1, u.Item2])
+            {
+                is_wall[u.Item1, u.Item2] = true;
+            }
+            if (IsInGrid(d) && !is_path[d.Item1, d.Item2])
+            {
+                is_wall[d.Item1, d.Item2] = true;
+            }
+        }
+
+        private void UpdateMovableDirections()
+        {
+            foreach(Pair v in vertices)
+            {
+                int x = v.Item1;
+                int y = v.Item2;
+                Pair up = new Pair(x, y - 1);
+                Pair down = new Pair(x, y - 1);
+                Pair left = new Pair(x, y - 1);
+                Pair right = new Pair(x, y - 1); 
+                if (IsInGrid(up) && is_path[up.Item1, up.Item2])
+                {
+                    is_wall[up.Item1, up.Item2] = true;
+                }
+                if (IsInGrid(down) && is_path[down.Item1, down.Item2])
+                {
+                    is_wall[down.Item1, down.Item2] = true;
+                }
+                if (IsInGrid(left) && is_path[left.Item1, left.Item2])
+                {
+                    is_wall[left.Item1, left.Item2] = true;
+                }
+                if (IsInGrid(right) && is_path[right.Item1, right.Item2])
+                {
+                    is_wall[right.Item1, right.Item2] = true;
+                }
+            }
         }
     }
 }

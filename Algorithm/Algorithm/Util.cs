@@ -9,7 +9,7 @@ namespace Algorithm
 {
     static public class Util
     {
-        public static List<T> AddIfMissing<T>(ref T element, ref List<T> list)
+        public static List<T> AddIfMissing<T>(T element, List<T> list)
         {
             foreach(T i in list)
             {
