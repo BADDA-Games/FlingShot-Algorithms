@@ -300,7 +300,26 @@ namespace Algorithm
         /// <returns>The length of the path.</returns>
         public int FastestPath()
         {
-            return -1;
+            int x = Width / 2;
+            int y = 0;
+            for(int i = 0; i < Height; i++)
+            {
+                if(!is_path[x, i])
+                {
+                    y = i - 1;
+                    break;
+                }
+            }
+            PairList v = VerticesX(x);
+            PairList list = new PairList();
+            foreach(Pair p in v)
+            {
+                if(p.Item2 <= y)
+                {
+                    list.Add(p);
+                }
+            }
+            return ShortestPaths(Start, list);
         }
 
         /// <summary>
@@ -390,7 +409,24 @@ namespace Algorithm
         /// <param name="p">A point in the GridGraph.</param>
         public List<char> PotentialDirections(Pair p)
         {
-            return null;
+            List<char> dirs = new List<char>{ 'U', 'D', 'L', 'R' };
+            if (p.Item1 == 0)
+            {
+                dirs.Remove('L');
+            }
+            else if(p.Item1 == Width - 1)
+            {
+                dirs.Remove('R');
+            }
+            if(p.Item2 == 0)
+            {
+                dirs.Remove('U');
+            }
+            else if(p.Item2 == Height - 1)
+            {
+                dirs.Remove('D');
+            }
+            return dirs;
         }
 
         private bool IsInGrid(Pair p)
@@ -528,10 +564,8 @@ namespace Algorithm
         private void BFS(Pair s)
         {
             distance.Add(Tuple.Create(Start, 0));
-            PairList queue = new PairList();
-            queue.Add(Start);
-            PairList seen = new PairList();
-            seen.Add(Start);
+            PairList queue = new PairList { Start };
+            PairList seen = new PairList { Start };
             PairList visited = new PairList();
             BFSRecursive(queue, seen, visited);
         }
@@ -673,7 +707,6 @@ namespace Algorithm
 
         private void MarkWalls()
         {
-            Console.WriteLine(vertices.Count);
             foreach(Pair p in vertices)
             {
                 MarkWalls(p);
@@ -682,7 +715,6 @@ namespace Algorithm
 
         private void MarkWalls(Pair p)
         {
-            Console.WriteLine("Hello!");
             int x = p.Item1;
             int y = p.Item2;
             Pair l = new Pair(x - 1, y);
@@ -734,6 +766,75 @@ namespace Algorithm
                     is_wall[right.Item1, right.Item2] = true;
                 }
             }
+        }
+
+        private PairList VerticesX(int x)
+        {
+            PairList list = new PairList();
+            foreach(Pair v in vertices)
+            {
+                if(x == v.Item1)
+                {
+                    list.Add(v);
+                }
+            }
+            return list;
+        }
+
+        private PairList VerticesY(int y)
+        {
+            PairList list = new PairList();
+            foreach (Pair v in vertices)
+            {
+                if (y == v.Item2)
+                {
+                    list.Add(v);
+                }
+            }
+            return list;
+        }
+
+        private int ShortestPaths(Pair start, PairList ends)
+        {
+            if (vertices.Contains(start))
+            {
+                if (ends.Contains(start))
+                {
+                    return 0;
+                }
+                int dist = 1;
+                PairList visited = new PairList();
+                PairList queue = new PairList();
+                visited.Add(start);
+                queue.Add(start);
+                while(queue.Count > 0)
+                {
+                    PairList next = new PairList();
+                    foreach(Pair i in queue)
+                    {
+                        PairList neighbors = adj[i.Item1, i.Item2];
+                        foreach(Pair j in neighbors)
+                        {
+                            if (!visited.Contains(j))
+                            {
+                                if (ends.Contains(j))
+                                {
+                                    return dist;
+                                }
+                                if (!i.Equals(j))
+                                {
+                                    next.Add(j);
+                                }
+                                visited.Add(j);
+                            }
+                        }
+                    }
+                    queue = next;
+                    dist++;
+                }
+                return -1;
+            }
+            return -1;
         }
     }
 }
