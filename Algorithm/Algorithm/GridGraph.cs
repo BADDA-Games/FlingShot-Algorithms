@@ -357,7 +357,34 @@ namespace Algorithm
         /// <param name="p">P.</param>
         public PairList WallOf(Pair p)
         {
-            return null;
+            if(!IsInGrid(p) || is_wall[p.Item1, p.Item2])
+            {
+                return null;
+            }
+            PairList ls = new PairList();
+            int x = p.Item1;
+            int y = p.Item2;
+            Pair l = new Pair(x - 1, y);
+            Pair r = new Pair(x + 1, y);
+            Pair u = new Pair(x, y - 1);
+            Pair d = new Pair(x, y + 1);
+            if(IsInGrid(l) && vertices.Contains(l))
+            {
+                ls.Add(l);
+            }
+            if(IsInGrid(r) && vertices.Contains(r))
+            {
+                ls.Add(r);
+            }
+            if(IsInGrid(u) && vertices.Contains(u))
+            {
+                ls.Add(u);
+            }
+            if(IsInGrid(d) && vertices.Contains(d))
+            {
+                ls.Add(d);
+            }
+            return ls;
         }
 
         /// <summary>

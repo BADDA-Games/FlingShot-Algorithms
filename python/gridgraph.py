@@ -583,7 +583,7 @@ class GridGraph:
         Returns a list of vertices adjacent to a wall p.
         If p is not a wall, returns None
         """
-        if not self.is_in_grid or not self.is_wall[p[0]][p[1]]:
+        if not self.is_in_grid(p) or not self.is_wall[p[0]][p[1]]:
             return None
         else:
             ls = []
