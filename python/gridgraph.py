@@ -881,7 +881,7 @@ class GridGraph:
                     if not self.is_path[i][j]:
                         self.is_path[i][j] = True
                         self.is_unused_path[i][j] = True
-            for j in range(ranges[i][1]+1, self.width):
+            for j in range(ranges[i][1]+1, self.height):
                 if not self.is_wall[i][j]:
                     self.is_wall[i][j] = True
                     self.is_unused_wall[i][j] = True
@@ -915,6 +915,7 @@ class GridGraph:
                 if not self.is_wall[j][i] and not self.is_path[j][i]:
                     if rand.generate(0, 1) == 1:
                         self.is_wall[j][i] = True
+                        self.is_unused_wall[j][i] = True
 
     """ PRIVATE """
     def keep_walls_column(self, ranges, rand):
@@ -923,6 +924,7 @@ class GridGraph:
                 if not self.is_wall[i][j] and not self.is_path[i][j]:
                     if rand.generate(0,1) == 1:
                         self.is_wall[i][j] = True
+                        self.is_unused_wall[i][j] = True
 
     """ PUBLIC """
     def longest_noninterfering_path(self, f, direction):

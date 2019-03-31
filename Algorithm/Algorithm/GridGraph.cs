@@ -394,6 +394,39 @@ namespace Algorithm
         /// <param name="r">The random number generator</param>
         public void DetermineExtraPaths(Random r)
         {
+            int pattern = r.Generate(1, 20);
+            PairList ranges = new PairList();
+            if(1 <= pattern && pattern < 9)
+            {
+                ranges = TightRange();
+                KeepWallsRow(ranges, r);
+                RowIntervalAssignment(ranges);
+            }
+            else if(9 <= pattern && pattern < 13)
+            {
+                ranges = TopDownRange();
+                KeepWallsRow(ranges, r);
+                RowIntervalAssignment(ranges);
+            }
+            else if(13 <= pattern && pattern < 17)
+            {
+                ranges = DownUpRange();
+                KeepWallsRow(ranges, r);
+                RowIntervalAssignment(ranges);
+            }
+            else if(17 <= pattern && pattern < 19)
+            {
+                ranges = LeftRightRange();
+                KeepWallsColumn(ranges, r);
+                ColumnIntervalAssignment(ranges);
+            }
+            else
+            {
+                ranges = RightLeftRange();
+                KeepWallsColumn(ranges, r);
+                ColumnIntervalAssignment(ranges);
+
+            }
 
         }
 
@@ -1052,6 +1085,206 @@ namespace Algorithm
                 return false;
             }
             return FastestPathFrom(p) != -1;
+        }
+
+        private PairList TightRange()
+        {
+            PairList ranges = new PairList();
+            for(int i = 0; i < Height; i++)
+            {
+                int min = Width - 1;
+                int max = 0;
+                for(int j = 0; j< Width; j++)
+                {
+                    if(is_path[j, i] || is_wall [j, i])
+                    {
+                        min = j < min ? j : min;
+                        max = j > max ? j : max;
+                    }
+                    ranges.Add(new Pair(min, max));
+                }
+            }
+            return ranges;
+        }
+
+        private PairList TopDownRange()
+        {
+            int min = Width - 1;
+            int max = 0;
+            PairList ranges = new PairList();
+            for (int i = 0; i < Height; i++)
+            {
+                for(int j = 0; j < Width; j++)
+                {
+                    if (is_path[j, i] || is_wall[j, i])
+                    {
+                        min = j < min ? j : min;
+                        max = j > max ? j : max;
+                    }
+                }
+                ranges.Add(new Pair(min, max));
+            }
+            return ranges;
+        }
+
+        private PairList DownUpRange()
+        {
+            int min = Width - 1;
+            int max = 0;
+            PairList ranges = new PairList();
+            for (int i = Height - 1; i >= 0; i--)
+            {
+                for (int j = 0; j < Width; j++)
+                {
+                    if (is_path[j, i] || is_wall[j, i])
+                    {
+                        min = j < min ? j : min;
+                        max = j > max ? j : max;
+                    }
+                }
+                ranges.Insert(0, new Pair(min, max));
+            }
+            return ranges;
+        }
+
+        private PairList LeftRightRange()
+        {
+            int min = Height - 1;
+            int max = 0;
+            PairList ranges = new PairList();
+            for(int i = 0; i < Width; i++)
+            {
+                for(int j = 0; j< Height; j++)
+                {
+                    if(is_path[i, j] || is_wall[i, j])
+                    {
+                        min = j < min ? j : min;
+                        max = j > max ? j : max;
+                    }
+                }
+                ranges.Add(new Pair(min, max));
+            }
+            return ranges;
+        }
+
+        private PairList RightLeftRange()
+        {
+            int min = Height - 1;
+            int max = 0;
+            PairList ranges = new PairList();
+            for(int i = Width - 1; i >= 0; i--)
+            {
+                for(int j = 0; j < Height; j++)
+                {
+                    if (is_path[i, j] || is_wall[i, j])
+                    {
+                        min = j < min ? j : min;
+                        max = j > max ? j : max;
+                    }
+                }
+                ranges.Add(new Pair(min, max));
+            }
+            return ranges;
+        }
+
+        private void ColumnIntervalAssignment(PairList ranges)
+        {
+            for(int i = 0; i < Width; i++)
+            {
+                for(int j = 0; j < ranges[i].Item1; j++)
+                {
+                    if(!is_wall[i, j])
+                    {
+                        is_wall[i, j] = true;
+                        is_unused_wall[i, j] = true;
+                    }
+                }
+                for(int j = ranges[i].Item1; j <= ranges[i].Item2; j++)
+                {
+                    if(!is_wall[i, j] && !is_path[i, j])
+                    {
+                        is_path[i, j] = true;
+                        is_unused_path[i, j] = true;
+                    }
+                }
+                for(int j = ranges[i].Item2 + 1; j < Height; j++)
+                {
+                    if(!is_wall[i, j])
+                    {
+                        is_wall[i, j] = true;
+                        is_unused_wall[i, j] = true;
+                    }
+                }
+            }
+        }
+
+        private void RowIntervalAssignment(PairList ranges)
+        {
+            for (int i = 0; i < Height; i++)
+            {
+                for (int j = 0; j < ranges[i].Item1; j++)
+                {
+                    if(!is_wall[j, i])
+                    {
+                        is_wall[j, i] = true;
+                        is_unused_wall[j, i] = true;
+                    }
+                   
+                }
+                for (int j = ranges[i].Item1; j <= ranges[i].Item2; j++)
+                {
+                    if(!is_wall[j, i] && !is_path[j, i])
+                    {
+                        is_path[j, i] = true;
+                        is_unused_path[j, i] = true;
+                    }
+                }
+                for (int j = ranges[i].Item2 + 1; j < Width; j++)
+                {
+                    if (!is_wall[j, i])
+                    {
+                        is_wall[j, i] = true;
+                        is_unused_wall[j, i] = true;
+                    }
+
+                }
+            }
+        }
+
+        private void KeepWallsRow(PairList ranges, Random rand)
+        {
+            for(int i = 0; i < Height; i++)
+            {
+                for(int j = ranges[i].Item1; j <= ranges[i].Item2; j++)
+                {
+                    if(!is_wall[j, i] && !is_path[j, i])
+                    {
+                        if(rand.Generate(0, 1) == 1)
+                        {
+                            is_wall[j, i] = true;
+                            is_unused_wall[j, i] = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void KeepWallsColumn(PairList ranges, Random rand)
+        {
+            for (int i = 0; i < Width; i++)
+            {
+                for (int j = ranges[i].Item1; j <= ranges[i].Item2; j++)
+                {
+                    if (!is_wall[i, j] && !is_path[i, j])
+                    {
+                        if (rand.Generate(0, 1) == 1)
+                        {
+                            is_wall[i, j] = true;
+                            is_unused_wall[i, j] = true;
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -203,15 +203,15 @@ def blocks(height, width, difficulty, complexity, seed):
     iterate()
 
     # print G.possible()
-    # G.determine_extra_paths(R)
+    G.determine_extra_paths(R)
 
-    for j in range(len(G.built_directions[0])):
-        for i in range(len(G.built_directions)):
-            print "({},{})".format(i,j), G.initial_built_direction[i][j]
+    # for j in range(len(G.built_directions[0])):
+    #     for i in range(len(G.built_directions)):
+    #         print "({},{})".format(i,j), G.initial_built_direction[i][j]
 
     return G
 #--------------------------------------
-public_seed = 1135
+public_seed = 11355
 level = 1
 b = create(public_seed, level)
 
