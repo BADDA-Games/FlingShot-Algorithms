@@ -73,11 +73,9 @@ namespace Algorithm
                     List<int> probabilities = MapProbability(dists);
                     PairList ranges = MakeRanges(probabilities);
                     int choice = rand.ChooseFrom(ranges);
-                    //Console.WriteLine(choice);
                     Pair vertex = dists[choice].Item1;
                     if(vertex != null)
                     {
-                        //Console.WriteLine(vertex.Item1 + " " + vertex.Item2);
                         if(TryBuild(g, vertex))
                         {
                             Check(g);
@@ -104,9 +102,6 @@ namespace Algorithm
                 if (copy)
                 {
                     gg = other;
-                    //TODO remove below lines
-                    //gg.DebugArray();
-                    //Console.WriteLine("");
                 }
             }
         }
@@ -142,7 +137,6 @@ namespace Algorithm
 
         private bool TryBuild(GridGraph g, Pair v)
         {
-            //Console.WriteLine(v.Item1 + " *TryBuild* " + v.Item2);
             List<char> built = new List<char>();
             foreach(char c in g.BuiltDirections[v.Item1, v.Item2])
             {
@@ -154,7 +148,6 @@ namespace Algorithm
                 movable.Add(c);
             }
             char initial = g.InitialBuiltDirection[v.Item1, v.Item2];
-            //Console.WriteLine("Initial " + initial);
             // Special case for cell right below exit
             if(v.Equals(new Pair(g.Width / 2, 0)) && movable.Count == 1 && movable[0] == 'D')
             {
@@ -187,22 +180,13 @@ namespace Algorithm
                     good.Remove('R');
                 }
             }
-            //foreach (char gd in good)
-            //{
-            //    Console.WriteLine("Before " + gd);
-            //}
             foreach (char c in built)
             {
-                //Console.WriteLine("Built " + c);
                 if (good.Contains(c))
                 {
                     good.Remove(c);
                 }
             }
-            //foreach (char gd in good)
-            //{
-            //    Console.WriteLine("After " + gd);
-            //}
             List<int> probabilities = new List<int>();
             foreach (char c in good)
             {

@@ -130,73 +130,6 @@ namespace Algorithm
                 Tuple<Pair, int> d = new Tuple<Pair, int>(p, o.Item2);
                 Distance.Add(d);
             }
-            //Console.WriteLine(Width.Equals(other.Width));
-            //Console.WriteLine(Height.Equals(other.Height));
-            //Console.WriteLine(Start.Equals(other.Start));
-            //Console.WriteLine(InitialBuiltDirection.Equals(other.InitialBuiltDirection));
-            //for(int i = 0; i < Width; i++)
-            //{
-            //    for(int j = 0; j < Width; j++)
-            //    {
-            //        if(InitialBuiltDirection[i, j] != other.InitialBuiltDirection[i, j])
-            //        {
-            //            Console.WriteLine("Oops")
-            //        }
-            //    }
-            //}
-            //Console.WriteLine(MovableDirections.Equals(other.MovableDirections));
-            //Console.WriteLine(vertices.Equals(other.vertices));
-            //Console.WriteLine(Distance.Equals(other.Distance));
-            //for (int i = 0; i < Width; i++)
-            //{
-            //for(int j = 0; j < Height; j++)
-            //{
-            //if(rev[i, j].Count == other.rev[i, j].Count)
-            //{
-            //    for(int i2 = 0; i < rev[i2, j].Count; i++)
-            //    {
-            //        Pair p = rev[i2, j][0];
-            //        Pair o = other.rev[i2, j][0];
-            //        if(p.Item1 != o.Item1 || p.Item2 != o.Item2)
-            //        {
-            //            Console.WriteLine(i + "R" + j + " " + i2);
-            //        }
-            //    }
-            //}
-            //if(adj[i, j].Count == other.adj[i, j].Count)
-            //{
-            //    for(int i2 = 0; i < rev[i2, j].Count; i++)
-            //    {
-            //        Pair p = adj[i2, j][0];
-            //        Pair o = other.adj[i2, j][0];
-            //        if(p.Item1 != o.Item1 || p.Item2 != o.Item2)
-            //        { 
-            //            Console.WriteLine(i + "R" + j + " " + i2);
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    Console.WriteLine(i + "R Len" + j);
-            //}
-            //if (is_path[i, j] != other.is_path[i, j])
-            //{
-            //    Console.WriteLine(i + "P" + j);
-            //}
-            //if(is_unused_path[i, j] != other.is_unused_path[i, j])
-            //{
-            //    Console.WriteLine(i + "UP" + j);
-            //}
-            //if(is_wall[i, j] != other.is_wall[i, j])
-            //{
-            //    Console.WriteLine(i + "W" + j);
-            //}
-            //if(is_unused_wall[i, j] != other.is_unused_wall[i, j])
-            //{
-            //    Console.WriteLine(i + "UW" + j);
-            //}
-            //}
-            //}
         }
 
         /// <summary>
@@ -669,7 +602,6 @@ namespace Algorithm
                         BuiltDirections[i, f.Item2] = Util.AddIfMissing('L', BuiltDirections[i, f.Item2]);
                         BuiltDirections[i, f.Item2] = Util.AddIfMissing('R', BuiltDirections[i, f.Item2]);
                     }
-                    //Console.WriteLine("IBT R " + t.Item1 + " " + t.Item2);
                     InitialBuiltDirection[t.Item1, t.Item2] = 'R';
                 }
                 else if(f.Item1 < t.Item1) // Right
@@ -681,7 +613,6 @@ namespace Algorithm
                         BuiltDirections[i, f.Item2] = Util.AddIfMissing('L', BuiltDirections[i, f.Item2]);
                         BuiltDirections[i, f.Item2] = Util.AddIfMissing('R', BuiltDirections[i, f.Item2]);
                     }
-                    //Console.WriteLine("IBT L " + t.Item1 + " " +t.Item2);
                     InitialBuiltDirection[t.Item1, t.Item2] = 'L';
                 }
             }
@@ -696,7 +627,6 @@ namespace Algorithm
                         BuiltDirections[f.Item1, i] = Util.AddIfMissing('U', BuiltDirections[f.Item1, i]);
                         BuiltDirections[f.Item1, i] = Util.AddIfMissing('D', BuiltDirections[f.Item1, i]);
                     }
-                    //Console.WriteLine("IBT D " + t.Item1 + " " + t.Item2);
                     InitialBuiltDirection[t.Item1, t.Item2] = 'D';
                 }
                 else if(f.Item2 < t.Item2)
@@ -708,7 +638,6 @@ namespace Algorithm
                         BuiltDirections[f.Item1, i] = Util.AddIfMissing('U', BuiltDirections[f.Item1, i]);
                         BuiltDirections[f.Item1, i] = Util.AddIfMissing('D', BuiltDirections[f.Item1, i]);
                     }
-                    //Console.WriteLine("IBT U " + t.Item1 + " " + t.Item2);
                     InitialBuiltDirection[t.Item1, t.Item2] = 'U';
                 }
 
