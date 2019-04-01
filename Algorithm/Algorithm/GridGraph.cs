@@ -12,18 +12,18 @@ namespace Algorithm
         public int Width { get; }
         public int Height { get; }
         public Pair Start { get; }
+        public List<Tuple<Pair, int>> Distance;
 
-        char[,] InitialBuiltDirections { get; }
-        Directions[,] BuiltDirections { get; }
-        Directions[,] MovableDirections { get; set; }
+        public char[,] InitialBuiltDirections { get; }
+        public Directions[,] BuiltDirections { get; }
+        public Directions[,] MovableDirections { get; set; }
 
         PairList vertices;
-        List<Tuple<Pair, int>> distance;
         PairList[,] adj;
         PairList[,] rev;
-        bool[,] is_path;
+        public bool[,] is_path;
         bool[,] is_unused_path;
-        bool[,] is_wall;
+        public bool[,] is_wall;
         bool[,] is_unused_wall;
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Algorithm
             MovableDirections = new Directions[width, height];
             BuiltDirections = new Directions[width, height];
             vertices = new PairList();
-            distance = new List<Tuple<Pair, int>>();
+            Distance = new List<Tuple<Pair, int>>();
             adj = new PairList[width, height];
             rev = new PairList[width, height];
             is_path = new bool[width, height];
@@ -79,7 +79,7 @@ namespace Algorithm
             MovableDirections = new Directions[Width, Height];
             BuiltDirections = new Directions[Width, Height];
             vertices = new PairList();
-            distance = new List<Tuple<Pair, int>>();
+            Distance = new List<Tuple<Pair, int>>();
             adj = new PairList[Width, Height];
             rev = new PairList[Width, Height];
             is_path = new bool[Width, Height];
@@ -119,6 +119,37 @@ namespace Algorithm
                     }
                 }
             }
+            //Console.WriteLine(Width.Equals(other.Width));
+            //Console.WriteLine(Height.Equals(other.Height));
+            //Console.WriteLine(Start.Equals(other.Start));
+            //Console.WriteLine(InitialBuiltDirections.Equals(other.InitialBuiltDirections));
+            //Console.WriteLine(MovableDirections.Equals(other.MovableDirections));
+            //Console.WriteLine(vertices.Equals(other.vertices));
+            //Console.WriteLine(Distance.Equals(other.Distance));
+            //Console.WriteLine(adj.Equals(other.adj));
+            //Console.WriteLine(rev.Equals(other.rev));
+            //for(int i = 0; i < Width; i++)
+            //{
+            //    for(int j = 0; j < Height; j++)
+            //    {
+            //        if(is_path[i, j] != other.is_path[i, j])
+            //        {
+            //            Console.WriteLine(i + "P" + j);
+            //        }
+            //        if(is_unused_path[i, j] != other.is_unused_path[i, j])
+            //        {
+            //            Console.WriteLine(i + "UP" + j);
+            //        }
+            //        if(is_wall[i, j] != other.is_wall[i, j])
+            //        {
+            //            Console.WriteLine(i + "W" + j);
+            //        }
+            //        if(is_unused_wall[i, j] != other.is_unused_wall[i, j])
+            //        {
+            //            Console.WriteLine(i + "UW" + j);
+            //        }
+            //    }
+            //}
         }
 
         /// <summary>
@@ -212,7 +243,7 @@ namespace Algorithm
         /// <param name="v">A vertex in the grid.</param>
         public int Depth(Pair v)
         {
-            return Util.Lookup(v, distance);
+            return Util.Lookup(v, Distance);
         }
 
         /// <summary>
@@ -684,7 +715,7 @@ namespace Algorithm
             rev = new PairList[Width, Height];
             is_wall = new bool[Width, Height];
             vertices = new PairList();
-            distance = new List<Tuple<Pair, int>>();
+            Distance = new List<Tuple<Pair, int>>();
             MovableDirections = new Directions[Width, Height];
             for(int i = 0; i < Width; i++)
             {
@@ -700,7 +731,7 @@ namespace Algorithm
 
         private void BFS(Pair s)
         {
-            distance.Add(Tuple.Create(Start, 0));
+            Distance.Add(Tuple.Create(Start, 0));
             PairList queue = new PairList { Start };
             PairList seen = new PairList { Start };
             PairList visited = new PairList();
@@ -724,7 +755,7 @@ namespace Algorithm
             if(q.Count > 0)
             {
                 Pair curr = q[0];
-                int dist = Util.Lookup(curr, distance);
+                int dist = Util.Lookup(curr, Distance);
                 Pair l = Move(curr, 'L');
                 Pair r = Move(curr, 'R');
                 Pair u = Move(curr, 'U');
@@ -737,7 +768,7 @@ namespace Algorithm
                     }
                     if (!s.Contains(l)){
                         s.Add(l);
-                        distance.Add(Tuple.Create(l, dist + 1));
+                        Distance.Add(Tuple.Create(l, dist + 1));
                     }
                 }
                 if(r != null)
@@ -749,7 +780,7 @@ namespace Algorithm
                     if (!s.Contains(r))
                     {
                         s.Add(r);
-                        distance.Add(Tuple.Create(r, dist + 1));
+                        Distance.Add(Tuple.Create(r, dist + 1));
                     }
                 }
                 if(u != null)
@@ -761,7 +792,7 @@ namespace Algorithm
                     if (!s.Contains(u))
                     {
                         s.Add(u);
-                        distance.Add(Tuple.Create(u, dist + 1));
+                        Distance.Add(Tuple.Create(u, dist + 1));
                     }
                 }
                 if(d != null)
@@ -773,7 +804,7 @@ namespace Algorithm
                     if (!s.Contains(d))
                     {
                         s.Add(d);
-                        distance.Add(Tuple.Create(d, dist + 1));
+                        Distance.Add(Tuple.Create(d, dist + 1));
                     }
                 }
                 v.Add(curr);

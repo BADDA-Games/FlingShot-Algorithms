@@ -29,17 +29,17 @@ namespace Algorithm
             return value;
         }
 
-        Pair ChooseFrom(PairList ranges)
+        public int ChooseFrom(PairList ranges)
         {
             int choice = Generate(ranges[0].Item1, ranges[ranges.Count-1].Item2);
-            foreach(Pair t in ranges)
+            for(int i = 0; i < ranges.Count; i++)
             {
-                if(Util.Between(choice, t))
+                if(Util.Between(choice, ranges[i]))
                 {
-                    return t;
+                    return i;
                 }
             }
-            return null;
+            return -1;
         }
     }
 }
