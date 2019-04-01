@@ -9,7 +9,7 @@ namespace Algorithm
 {
     public class Random
     {
-        public long seed;
+        private long seed;
         public long InitialSeed { get; }
 
         public Random(int seed)
@@ -25,7 +25,7 @@ namespace Algorithm
                 seed = (low + high - seed + 1999) * 1582307 % 55555333;
             }
             seed = (3515366 * seed + 12345) % 99999989;
-            Console.WriteLine(seed);
+            //Console.WriteLine(seed);
             int value = (int)((seed % mod) + low);
             return value;
         }

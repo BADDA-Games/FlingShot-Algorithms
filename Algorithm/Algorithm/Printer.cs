@@ -15,9 +15,18 @@ namespace Algorithm
             {
                 for(int j=0; j<gg.Width; j++)
                 {
+                    if(nums[j, i] == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                    }
                     Console.Write(nums[j, i]+" ");
                 }
                 Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.White;
             }
         }
     }

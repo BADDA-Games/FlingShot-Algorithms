@@ -46,13 +46,14 @@ namespace Algorithm
         {
             gg = new GridGraph(width, height);
             Build();
+            Printer.PrintGridGraph(gg);
             Level++;
         }
 
         private void Build()
         {
             Iterate();
-            //gg.DetermineExtraPaths(rand);
+            gg.DetermineExtraPaths(rand);
             gg.DebugArray();
         }
 
@@ -72,6 +73,7 @@ namespace Algorithm
                     List<int> probabilities = MapProbability(dists);
                     PairList ranges = MakeRanges(probabilities);
                     int choice = rand.ChooseFrom(ranges);
+                    //Console.WriteLine(choice);
                     Pair vertex = dists[choice].Item1;
                     if(vertex != null)
                     {
@@ -94,7 +96,7 @@ namespace Algorithm
             }
 
             //TODO change to another looping condition
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 60; i++)
             {
                 copy = false;
                 GridGraph other = new GridGraph(gg);
@@ -122,18 +124,25 @@ namespace Algorithm
 
         private PairList MakeRanges(List<int> probabilities)
         {
-            int cur = 0;
             PairList ranges = new PairList();
             foreach(int p in probabilities)
             {
-                ranges.Add(new Pair(cur, cur+p-1));
-                cur += p;
+                if(ranges.Count == 0)
+                {
+                    ranges.Add(new Pair(0, probabilities[0]));
+                }
+                else
+                {
+                    int next = ranges[ranges.Count - 1].Item2 + 1;
+                    ranges.Add(new Pair(next, next + p));
+                }
             }
             return ranges;
         }
 
         private bool TryBuild(GridGraph g, Pair v)
         {
+            //Console.WriteLine(v.Item1 + " *TryBuild* " + v.Item2);
             List<char> built = new List<char>();
             foreach(char c in g.BuiltDirections[v.Item1, v.Item2])
             {
@@ -144,7 +153,8 @@ namespace Algorithm
             {
                 movable.Add(c);
             }
-            char initial = g.InitialBuiltDirections[v.Item1, v.Item2];
+            char initial = g.InitialBuiltDirection[v.Item1, v.Item2];
+            //Console.WriteLine("Initial " + initial);
             // Special case for cell right below exit
             if(v.Equals(new Pair(g.Width / 2, 0)) && movable.Count == 1 && movable[0] == 'D')
             {
@@ -177,17 +187,25 @@ namespace Algorithm
                     good.Remove('R');
                 }
             }
-            foreach(char c in built)
+            //foreach (char gd in good)
+            //{
+            //    Console.WriteLine("Before " + gd);
+            //}
+            foreach (char c in built)
             {
+                //Console.WriteLine("Built " + c);
                 if (good.Contains(c))
                 {
                     good.Remove(c);
                 }
             }
+            //foreach (char gd in good)
+            //{
+            //    Console.WriteLine("After " + gd);
+            //}
             List<int> probabilities = new List<int>();
             foreach (char c in good)
             {
-                //Console.WriteLine(c);
                 switch (c)
                 {
                     case 'U':
@@ -204,7 +222,7 @@ namespace Algorithm
                         break;
                 }
             }
-            while(good.Count > 0)
+            while (good.Count > 0)
             {
                 PairList ranges = MakeRanges(probabilities);
                 int choice = rand.ChooseFrom(ranges);

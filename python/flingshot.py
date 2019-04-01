@@ -120,11 +120,13 @@ def blocks(height, width, difficulty, complexity, seed):
         Returns True if we sucessfully decide to expand on it,
         or False if we do not.
         """
+        # print v[0], "*TryBuild*", v[1]
         #TODO special case for (4,0) === (width//2, 0)
         #We should not treat it as a vertex for this case if movable is only "D"
         built = g.built_directions[v[0]][v[1]]
         movable = g.movable_directions[v[0]][v[1]]
         initial = g.initial_built_direction[v[0]][v[1]]
+        # print "Initial", initial
         #Special case for cell right above exit
         if v == (g.width//2, 0) and movable == ["D"]:
                 return False
@@ -139,7 +141,13 @@ def blocks(height, width, difficulty, complexity, seed):
                 good.remove(l)
             if r in good:
                 good.remove(r)
+        # for gd in good:
+        #     print "Before", gd
+        # for c in built:
+            # print "Built", c
         good = [x for x in good if x not in built]
+        # for gd in good:
+        #     print "After", gd
         def weight_assignments(dir):
             weight = {
                 u: 3,
@@ -179,8 +187,8 @@ def blocks(height, width, difficulty, complexity, seed):
             #TODO Better probability function? Use some GG methods!
             probabilities = map(lambda x: 1 + 2*x[1]**2, dists)
             ranges = util.tuple_ranges((lambda x: 1+2*x[1]**2), dists)
-            # print ranges
             choice = R.choose_from(ranges)
+            # print choice
             vertex = dists[choice][0]
             if not vertex == None:
                 if try_build(g, vertex):
