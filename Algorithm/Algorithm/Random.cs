@@ -9,23 +9,24 @@ namespace Algorithm
 {
     public class Random
     {
-        private int seed;
-        public int InitialSeed { get; }
+        public long seed;
+        public long InitialSeed { get; }
 
         public Random(int seed)
         {
             this.seed = seed;
         }
 
-        public int Generate(int low, int high)
+        public int Generate(long low, long high)
         {
-            int mod = high - low + 1;
+            long mod = high - low + 1;
             if(seed < 1)
             {
-                seed = ((low + high - seed + 1999) * 1582307) % 55555333;
+                seed = (low + high - seed + 1999) * 1582307 % 55555333;
             }
             seed = (3515366 * seed + 12345) % 99999989;
-            int value = (seed % mod) + low;
+            Console.WriteLine(seed);
+            int value = (int)((seed % mod) + low);
             return value;
         }
 

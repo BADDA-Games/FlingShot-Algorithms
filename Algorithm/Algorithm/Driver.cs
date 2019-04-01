@@ -10,7 +10,7 @@ namespace Algorithm
     {
         public static void Main(string[] args)
         {
-            Algorithm generator = new Algorithm(12345);
+            Algorithm generator = new Algorithm(1345);
             generator.Generate();
         }
     }

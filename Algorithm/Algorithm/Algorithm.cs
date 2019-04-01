@@ -52,7 +52,7 @@ namespace Algorithm
         private void Build()
         {
             Iterate();
-            gg.DetermineExtraPaths(rand);
+            //gg.DetermineExtraPaths(rand);
             gg.DebugArray();
         }
 
@@ -66,7 +66,7 @@ namespace Algorithm
                 {
                     if(dists.Count == 0)
                     {
-                        //Console.WriteLine("ERROR - No good vertices.");
+                        Console.WriteLine("ERROR - No good vertices.");
                         return;
                     }
                     List<int> probabilities = MapProbability(dists);
@@ -75,6 +75,7 @@ namespace Algorithm
                     Pair vertex = dists[choice].Item1;
                     if(vertex != null)
                     {
+                        //Console.WriteLine(vertex.Item1 + " " + vertex.Item2);
                         if(TryBuild(g, vertex))
                         {
                             Check(g);
@@ -90,11 +91,10 @@ namespace Algorithm
                         return;
                     }
                 }
-
             }
 
             //TODO change to another looping condition
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 3; i++)
             {
                 copy = false;
                 GridGraph other = new GridGraph(gg);
@@ -102,6 +102,9 @@ namespace Algorithm
                 if (copy)
                 {
                     gg = other;
+                    //TODO remove below lines
+                    //gg.DebugArray();
+                    //Console.WriteLine("");
                 }
             }
         }
@@ -131,16 +134,28 @@ namespace Algorithm
 
         private bool TryBuild(GridGraph g, Pair v)
         {
-            List<char> built = g.BuiltDirections[v.Item1, v.Item2];
-            List<char> movable = g.MovableDirections[v.Item1, v.Item2];
+            List<char> built = new List<char>();
+            foreach(char c in g.BuiltDirections[v.Item1, v.Item2])
+            {
+                built.Add(c);
+            }
+            List<char> movable = new List<char>();
+            foreach(char c in g.MovableDirections[v.Item1, v.Item2])
+            {
+                movable.Add(c);
+            }
             char initial = g.InitialBuiltDirections[v.Item1, v.Item2];
             // Special case for cell right below exit
             if(v.Equals(new Pair(g.Width / 2, 0)) && movable.Count == 1 && movable[0] == 'D')
             {
                 return false;
             }
-            List<char> good = g.PotentialDirections(v);
-            if(initial == 'U' || initial == 'D')
+            List<char> good = new List<char>();
+            foreach(char c in g.PotentialDirections(v))
+            {
+                good.Add(c);
+            }
+            if (initial == 'U' || initial == 'D')
             {
                 if (good.Contains('U'))
                 {
@@ -172,6 +187,7 @@ namespace Algorithm
             List<int> probabilities = new List<int>();
             foreach (char c in good)
             {
+                //Console.WriteLine(c);
                 switch (c)
                 {
                     case 'U':
@@ -206,6 +222,7 @@ namespace Algorithm
                 int length = rand.Generate(1, max_length);
                 g.BuildPath(v, dir, length);
                 return true;
+                //TODO we want to try all directions, not just the one we first select
             }
             return false;
 
@@ -223,7 +240,10 @@ namespace Algorithm
             {
                 return;
             }
-            if(g.Complexity() >= gg.Complexity())
+            //Console.WriteLine("New: " + g.Complexity());
+            //Console.WriteLine("Old: " + gg.Complexity());
+            //TODO proper looping condition?
+            if(g.vertices.Count < 8 || g.Complexity() >= gg.Complexity())
             {
                 valid = true;
                 copy = true;

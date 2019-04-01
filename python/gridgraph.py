@@ -182,7 +182,7 @@ class GridGraph:
                 # Initial built direction is the one which lets you get back to
                 # The previous vertex, important for additional expansion
                 self.initial_built_direction[t[0]][t[1]] = "R"
-            else: # Going right
+            elif f[0] < t[0]: # Going right
                 util.add_if_missing("R", self.built_directions[f[0]][f[1]])
                 util.add_if_missing("L", self.built_directions[t[0]][t[1]])
                 for i in range(f[0]+1, t[0]):
@@ -197,7 +197,7 @@ class GridGraph:
                     util.add_if_missing("U", self.built_directions[f[0]][i])
                     util.add_if_missing("D", self.built_directions[f[0]][i])
                 self.initial_built_direction[t[0]][t[1]] = "D"
-            else: # Going down
+            elif f[1] < t[1]: # Going down
                 util.add_if_missing("D", self.built_directions[f[0]][f[1]])
                 util.add_if_missing("U", self.built_directions[t[0]][t[1]])
                 for i in range(f[1]+1, t[1]):

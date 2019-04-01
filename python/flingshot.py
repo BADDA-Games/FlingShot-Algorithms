@@ -179,7 +179,7 @@ def blocks(height, width, difficulty, complexity, seed):
             #TODO Better probability function? Use some GG methods!
             probabilities = map(lambda x: 1 + 2*x[1]**2, dists)
             ranges = util.tuple_ranges((lambda x: 1+2*x[1]**2), dists)
-            print ranges
+            # print ranges
             choice = R.choose_from(ranges)
             vertex = dists[choice][0]
             if not vertex == None:
@@ -212,7 +212,7 @@ def blocks(height, width, difficulty, complexity, seed):
 
     return G
 #--------------------------------------
-public_seed = 11355
+public_seed = 1345
 level = 1
 b = create(public_seed, level)
 
