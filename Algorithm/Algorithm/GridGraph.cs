@@ -188,7 +188,7 @@ namespace Algorithm
             {
                 for(int j=0; j<Height; j++)
                 {
-                    arr[i, j] = is_path[i, j] == true ? 1 : 0;
+                    arr[i, j] = is_path[i, j] == true ? 0 : 1;
                 }
             }
             return arr;

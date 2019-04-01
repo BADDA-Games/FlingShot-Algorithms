@@ -11,7 +11,15 @@ namespace Algorithm
         public static void Main(string[] args)
         {
             Algorithm generator = new Algorithm(1345);
-            generator.Generate();
+            int[,] maze = generator.Generate();
+            for(int i = 0; i < 18; i++)
+            {
+                for(int j = 0; j < 11; j++)
+                {
+                    Console.Write(maze[i, j] + " ");
+                }
+                Console.WriteLine("");
+            }
         }
     }
 }

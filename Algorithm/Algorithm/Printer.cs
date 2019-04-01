@@ -15,7 +15,7 @@ namespace Algorithm
             {
                 for(int j=0; j<gg.Width; j++)
                 {
-                    if(nums[j, i] == 0)
+                    if(nums[j, i] == 1)
                     {
                         Console.ForegroundColor = ConsoleColor.DarkGray;
                     }

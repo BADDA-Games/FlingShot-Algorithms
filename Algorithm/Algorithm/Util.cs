@@ -90,8 +90,5 @@ namespace Algorithm
             }
             return default(T2);
         }
-
-        //TODO please
-        //public static List<Tuple<int, int>> TupleRanges()
     }
 }

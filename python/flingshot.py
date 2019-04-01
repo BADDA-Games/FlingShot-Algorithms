@@ -110,6 +110,8 @@ def blocks(height, width, difficulty, complexity, seed):
         up = g.is_wall[start[0]][start[1]-1]
         if not (left or right or up):
             return
+        # print "New:", g.complexity()
+        # print "Old:", G.complexity()
         if(g.complexity() >= G.complexity()):
             valid.value = True
             copy.value = True

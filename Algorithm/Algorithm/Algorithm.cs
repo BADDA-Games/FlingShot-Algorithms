@@ -42,19 +42,42 @@ namespace Algorithm
             rand = new Random(Seed);
         }
 
-        public void Generate()
+        public int[,] Generate()
         {
             gg = new GridGraph(width, height);
             Build();
-            Printer.PrintGridGraph(gg);
+            //Printer.PrintGridGraph(gg);
             Level++;
+            int[,] fullMap = new int[height + 2, width + 2];
+            int[,] cellArray = gg.GetCellArray();
+
+            for(int i = 0; i < width; i++)
+            {
+                for(int j = 0; j < height; j++)
+                {
+                    fullMap[j + 1, i + 1] = cellArray[i, j];
+                }
+            }
+            for(int i = 0; i < width + 2; i++)
+            {
+                fullMap[0, i] = 1;
+                fullMap[height + 1, i] = 1;
+            }
+            for (int j = 1; j < height + 1; j++)
+            {
+                fullMap[j, 0] = 1;
+                fullMap[j, width + 1] = 1;
+            }
+            fullMap[0, width / 2 + 1] = 0;
+
+            return fullMap;
         }
 
         private void Build()
         {
             Iterate();
             gg.DetermineExtraPaths(rand);
-            gg.DebugArray();
+            //gg.DebugArray();
         }
 
         private void Iterate()
@@ -67,7 +90,7 @@ namespace Algorithm
                 {
                     if(dists.Count == 0)
                     {
-                        Console.WriteLine("ERROR - No good vertices.");
+                        //Console.WriteLine("ERROR - No good vertices.");
                         return;
                     }
                     List<int> probabilities = MapProbability(dists);
@@ -245,7 +268,7 @@ namespace Algorithm
             //Console.WriteLine("New: " + g.Complexity());
             //Console.WriteLine("Old: " + gg.Complexity());
             //TODO proper looping condition?
-            if(g.vertices.Count < 8 || g.Complexity() >= gg.Complexity())
+            if(g.Complexity() >= gg.Complexity())
             {
                 valid = true;
                 copy = true;
