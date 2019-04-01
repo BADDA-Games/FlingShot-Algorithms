@@ -502,6 +502,7 @@ namespace Algorithm
         /// <returns>A floating point approximation of the difficulty.</returns>
         public float Difficulty()
         {
+            //TODO write difficulty
             return (float) -1.0;
         }
 

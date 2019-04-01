@@ -73,6 +73,14 @@ namespace Algorithm
             return fullMap;
         }
 
+        // **RESOURCES**
+        // Random - Generate, ChooseFrom
+        // GridGraph - Copy Constructor, BuildPath, InDeg, OutDeg, TrapVertices,
+        // CanGetStuck, FastestPath, FastestPathFrom, LongestPath,
+        // VerticesInDirection, WallOf, Depth, Complexity, *Difficulty*,
+        // *EssentialVertices*, BuiltDirections, MovableDirections,
+        // Possible, PossibleFromLocation
+
         private void Build()
         {
             Iterate();
@@ -129,6 +137,8 @@ namespace Algorithm
             }
         }
 
+
+        //TODO better probability function?
         private List<int> MapProbability(List<Tuple<Pair, int>> dists)
         {
             List<int> probabilities = new List<int>();
@@ -238,6 +248,7 @@ namespace Algorithm
                 int max_length = g.LongestPath(v, dir, 1);
                 if (dir == 'D')
                 {
+                    //TODO more calculations into max length
                     max_length = Math.Min(max_length, 4);
                 }
                 else
@@ -250,6 +261,7 @@ namespace Algorithm
                 //TODO we want to try all directions, not just the one we first select
             }
             return false;
+            //TODO we need to try again with different lengths and directions if it fails here
 
         }
 
