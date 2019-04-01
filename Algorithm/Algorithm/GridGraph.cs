@@ -7,6 +7,7 @@ using Directions = System.Collections.Generic.List<char>;
 
 namespace Algorithm
 {
+    //TODO documentation on private classes?
     public class GridGraph
     {
         public int Width { get; }
